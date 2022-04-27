@@ -1,11 +1,12 @@
 #include "iostream"
 using namespace std;
-#include "Empleado.h"
 #include "Inventario.h"
+#include "Empleado.h"
 
 int main(){
     Gerente *gerente = new Gerente("Alberto Alvarez", "VATL900113MW8");
     ComicsAdquiridos *inventario = new ComicsAdquiridos();
+    Empleado *empleado = new Empleado();
     // inventario->establecerComicsAdquiridos();
     // inventario->mostrarInventario();
 
@@ -19,6 +20,10 @@ int main(){
     // inventario->mostrarInventario();
 
     // inventario->pedirNuevosComics();
+    // gerente->mostrarSueldoAPagarEmpleados();
+    // gerente->mostrarEmpleados();
+
+    empleado->venderComics();
 
     return 0;
 }

@@ -1,0 +1,2 @@
+comicsAdquiridos->establecerComicsAdquiridos();
+    comicsAdquiridos->mostrarComicsAdquiridos();

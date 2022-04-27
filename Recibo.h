@@ -61,22 +61,19 @@ void Recibo_lotes_adquiridos::imprimirRecibo(int totalLotes){
     cout << "************************************\n";
     if(archivoComicsAdquiridos.is_open()){
         while(getline(archivoComicsAdquiridos, linea)){
-            if(contador == 0) cout << "Compania: " << linea << "\n";
-            if(contador == 1) cout << "Comic: " << linea << "\n";
-            if(contador == 2){
+            if(contador == 0){
+                cout << "Codigo: " << linea << endl;
+            }
+            if(contador == 1) cout << "Compania: " << linea << "\n";
+            if(contador == 2) cout << "Comic: " << linea << "\n";
+            if(contador == 3){
                 cout << "Precio: " << stoi(linea.c_str()) << endl;
                 precio_individual = stoi(linea.c_str());
             }
-            if(contador == 3)
-                cout << "Codigo: " << linea << endl;
             if(contador == 4){
-                cout << "Fecha publicacion: " << linea << "/";
+                cout << "Fecha publicacion: " << linea << endl;
             }
-            if(contador == 5)
-                cout << linea << "/";
-            if(contador == 6) 
-                cout << linea << endl;
-            if(contador == 7){
+            if(contador == 5){
                 int totalPorComic = precio_individual * stoi(linea);
                 cout << "Cantidad de lotes: " << linea << endl;
                 total += totalPorComic;

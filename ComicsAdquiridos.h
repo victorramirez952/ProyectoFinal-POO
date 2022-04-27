@@ -1,36 +1,36 @@
 #include "vector"
 #include "fstream"
-#include "Recibo.h"
-class Tienda : public Recibo_lotes_adquiridos{
+class ComicsAdquiridos{
     private:
         vector<Comic> comicsAdquiridos;
-        // vector<Categorias> categorias;
     public:
-        Tienda();
-        void establecerComicsAdquiridos();
-        void pedirNuevosComics();
+        ComicsAdquiridos();
+        // void establecerComicsAdquiridos();
         void organizarLotesAdquiridos();
-        ~Tienda();
+        void pedirNuevosComics();
+        ~ComicsAdquiridos();
 };
 
-// derivaciones
+ComicsAdquiridos::ComicsAdquiridos(){}
 
-Tienda::Tienda(){}
+// void ComicsAdquiridos::establecerComicsAdquiridos(){
+//     string linea;
+//     ifstream objetoArchivo("ComicsAdquiridos.txt");
+//     int contador = 0, contadorArray = 0;
+//     if(objetoArchivo.is_open()){
+//         while(getline(objetoArchivo, linea)){
+//             if(contador == 0){
+//                 comicsAdquiridos.emplace(comicsAdquiridos.end());
+//                 ComicsAdquiridos[contadorArray]; 
+//             }
+//         }
+//         objetoArchivo.close();
+//     } else{
+//         cout << "No puedo abrir el archivo...";
+//     }
+// }
 
-void Tienda::establecerComicsAdquiridos(){
-    string linea;
-    ifstream objetoArchivo("ComicsAdquiridos.txt");
-    if(objetoArchivo.is_open()){
-        while(getline(objetoArchivo, linea)){
-            comicsAdquiridos.emplace(comicsAdquiridos.end());
-        }
-        objetoArchivo.close();
-    } else{
-        cout << "No puedo abrir el archivo...";
-    }
-}
-
-void Tienda::pedirNuevosComics(){
+void Gerente::pedirNuevosComics(){
     string compania, comic, answer, codigo;
     int dia, mes, anio, nLotes, totalLotes;
     float precio;
@@ -68,9 +68,7 @@ void Tienda::pedirNuevosComics(){
             objetoArchivo << compania << endl;
             objetoArchivo << comic << endl;
             objetoArchivo << precio << endl;
-            objetoArchivo << dia << endl;
-            objetoArchivo << mes << endl;
-            objetoArchivo << anio << endl;
+            objetoArchivo << dia << "/" << mes << "/" << anio << endl;
             objetoArchivo << nLotes << endl;
         } else{
             cout << "No se puede abrir el archivo\n";
@@ -92,8 +90,6 @@ void Tienda::pedirNuevosComics(){
     }
 }
 
-void Tienda::organizarLotesAdquiridos(){
-    // ifstream archivoComicsAdquiridos("ComicsAdquiridos.txt");
-}
+void ComicsAdquiridos::organizarLotesAdquiridos(){}
 
-Tienda::~Tienda(){}
+ComicsAdquiridos::~ComicsAdquiridos(){}

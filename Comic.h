@@ -3,18 +3,26 @@ class Comic{
         string nombre, compania, codigo, fecha;
         float precio;
         int cantidad;
-        bool oferta;
+        bool oferta = false;
     public:
         Comic();
+        void setCodigo(string _codigo);
         void setCompania(string _compania);
         void setNombre(string _nombre);
         void setPrecio(float _precio);
-        void setCodigo(string _codigo);
         void setFecha(string _fecha);
         void setCantidad(int _cantidad);
         void setOferta(int _oferta);
 
-        void mostrarDatos(){}
+        string getCodigo();
+        string getCompania();
+        string getNombre();
+        int getPrecio();
+        string getFecha();
+        int getCantidad();
+        bool getOferta();
+
+        void mostrarDatos();
         ~Comic();
 };
 
@@ -50,15 +58,44 @@ void Comic::setOferta(int _oferta){
     else this->oferta = false;
 }
 
-// void Comic::mostrarDatos(){
-//     cout << "Compania: " << this->compania << endl;
-//     cout << "Nombre: " << this->nombre << endl;
-//     cout << "Precio: " << this->precio << endl;
-//     cout << "Codigo: " << this->codigo << endl;
-//     cout << "Fecha: " << this->fecha << endl;
-//     cout << "Cantidad: " << this->cantidad << endl;
-//     if(this->oferta) cout << "Esta en oferta" << endl;
-// }
+string Comic::getCodigo(){
+    return this->codigo;
+}
+
+string Comic::getCompania(){
+    return this->compania;
+}
+
+string Comic::getNombre(){
+    return this->nombre;
+}
+
+int Comic::getPrecio(){
+    return this->precio;
+}
+
+string Comic::getFecha(){
+    return this->fecha;
+}
+
+int Comic::getCantidad(){
+    return this->cantidad;
+}
+
+bool Comic::getOferta(){
+    return this->oferta;
+}
+
+
+void Comic::mostrarDatos(){
+    cout << "Codigo: " << this->codigo << endl;
+    cout << "Compania: " << this->compania << endl;
+    cout << "Nombre: " << this->nombre << endl;
+    cout << "Precio: " << this->precio << endl;
+    cout << "Fecha: " << this->fecha << endl;
+    cout << "Cantidad: " << this->cantidad << endl;
+    if(this->oferta) cout << "Esta en oferta" << endl;
+}
 
 Comic::~Comic(){}
 

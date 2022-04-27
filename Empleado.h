@@ -1,5 +1,3 @@
-#include "Tienda.h"
-#include "Inventario.h"
 class Persona{
     protected:
         string nombre, rfc;
@@ -9,7 +7,7 @@ class Persona{
         ~Persona();
 };
 
-class Empleado : public Persona, public Inventario{
+class Empleado : public Persona{
     private:
         int asistencia;
         float sueldo;
@@ -20,7 +18,7 @@ class Empleado : public Persona, public Inventario{
         ~Empleado();
 };
 
-class Gerente : public Persona, public Tienda{
+class Gerente : public Persona{
     private:
     public:
         Gerente();

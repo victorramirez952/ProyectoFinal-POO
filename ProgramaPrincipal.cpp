@@ -5,20 +5,20 @@ using namespace std;
 
 int main(){
     Gerente *gerente = new Gerente("Alberto Alvarez", "VATL900113MW8");
-    Inventario *inventario = new Inventario();
-
-    comicsAdquiridos->establecerComicsAdquiridos();
-    inventario->mostrarInventario();
-    comicsAdquiridos->organizarLotesAdquiridos();
-    inventario->mostrarInventario();
-
+    ComicsAdquiridos *inventario = new ComicsAdquiridos();
+    // inventario->establecerComicsAdquiridos();
     // inventario->mostrarInventario();
-    // comicsAdquiridos->mostrarComicsAdquiridos();
 
+    // inventario->organizarLotesAdquiridos();
+    // inventario->mostrarInventario();
 
-    // comicsAdquiridos->pedirNuevosComics();
+    // inventario->editarComics();
+    // inventario->mostrarInventario();
 
-    // Empleado *empleado1 = new Empleado();
-    // gerente->pedirNuevosComics();
+    // inventario->eliminarComicsVendidos();
+    // inventario->mostrarInventario();
+
+    // inventario->pedirNuevosComics();
+
     return 0;
 }

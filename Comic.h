@@ -54,7 +54,7 @@ void Comic::setCantidad(int _cantidad){
 }
 
 void Comic::setOferta(int _oferta){
-    if(_oferta = 1) this->oferta = true;
+    if(_oferta == 1) this->oferta = true;
     else this->oferta = false;
 }
 

@@ -1,2 +1,5 @@
-comicsAdquiridos->establecerComicsAdquiridos();
-    comicsAdquiridos->mostrarComicsAdquiridos();
+inventario->establecerComicsAdquiridos();
+    inventario->mostrarInventario();
+
+    inventario->organizarLotesAdquiridos();
+    inventario->mostrarInventario();

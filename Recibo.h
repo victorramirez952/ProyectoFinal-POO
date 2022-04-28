@@ -18,6 +18,7 @@ class Recibo_del_cliente : public Recibo{
         int cantidad;
     public:
         Recibo_del_cliente();
+        void imprimirRecibo(string _vendedor, int _cantidad, string fecha, float total, vector<string> _comics, vector<string> _codigos, vector<float> precioIndividual);
         ~Recibo_del_cliente();
 };
 
@@ -33,14 +34,31 @@ class Recibo_lotes_adquiridos : public Recibo{
         ~Recibo_lotes_adquiridos();
 };
 
+////////////////////////////////////////////////////////////////
 // derivaciones
 // Recibo
 Recibo::Recibo(){}
 
 Recibo::~Recibo(){}
 
+////////////////////////////////////////////////////////////////
 // Recibo cliente
 Recibo_del_cliente::Recibo_del_cliente(){}
+
+void Recibo_del_cliente::imprimirRecibo(string _vendedor, int _cantidad, string fecha, float total, vector<string> _comics, vector<string> _codigos, vector<float> _precios){
+    cout << "------- Recibo del Cliente --------\n";
+    cout << "Sucursal: La cueva del Comic\n";
+    cout << "Fecha: " << fecha << endl;
+    cout << "Vendedor: " << _vendedor << endl;
+    cout << "***********************\n";
+    for(int i = 0; i < _cantidad; i++){
+        cout << "Comic: " << _comics[i] << endl;
+        cout << "Codigo: " << _codigos[i] << endl;
+        cout << "Precio: " << _precios[i] << endl;
+        cout << "------------" << endl;
+    }
+    cout << "Total: " << total << " MXN\n";
+}
 
 Recibo_del_cliente::~Recibo_del_cliente(){}
 

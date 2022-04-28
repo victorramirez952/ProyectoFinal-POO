@@ -14,6 +14,7 @@ class Inventario{
         void eliminarComicsVendidos();
         void mostrarInventario();
         void actualizarInventario();
+        void refrescarInventario();
         void actualizarInventario(vector<Comic> comics);
         ~Inventario();
 };
@@ -32,37 +33,7 @@ class ComicsAdquiridos : public Inventario, public Recibo_lotes_adquiridos{
 ////////////////////////////////////////////////////////
 //derivaciones
 Inventario::Inventario(){
-    string linea;
-    ifstream archivoBD("BDComics.txt");
-    if(archivoBD.is_open()){
-        int contadorArrayComics = 0, contador = 0;
-        while(getline(archivoBD, linea)){
-            if(contador == 0){
-                comics.emplace(comics.end());
-                comics[contadorArrayComics].setCodigo(linea);
-            }
-            if(contador == 1)
-                comics[contadorArrayComics].setCompania(linea);
-            if(contador == 2)
-                comics[contadorArrayComics].setNombre(linea);
-            if(contador == 3)
-                comics[contadorArrayComics].setPrecio(stoi(linea.c_str()));
-            if(contador == 4)
-                comics[contadorArrayComics].setFecha(linea);
-            if(contador == 5)
-                comics[contadorArrayComics].setCantidad(stoi(linea.c_str()));
-            if(contador == 6){
-                comics[contadorArrayComics].setOferta(stoi(linea.c_str()));
-                contadorArrayComics++;
-                contador = 0;
-                continue;
-            }
-            contador++;
-        }
-    } else{
-        cout << "No puedo abrir el archivo...";
-    }
-    archivoBD.close();
+    refrescarInventario();
 }
 
 void Inventario::buscarComic(string search){
@@ -80,8 +51,13 @@ void Inventario::buscarComic(string search){
             if(encontrado == false) continue;
 
             if(encontrado){
-                cout << linea << endl;
-                if(contador == 1) break;
+                if(contador == 1){
+                    int oferta = stoi(linea.c_str());
+                    if(oferta == 1) cout << "Esta en oferta" << endl;
+                    break;
+                } else{
+                    cout << linea << endl; 
+                }
                 contador--;
             }
         }
@@ -210,6 +186,40 @@ void Inventario::actualizarInventario(){
     }
 }
 
+void Inventario::refrescarInventario(){
+    string linea;
+    ifstream archivoBD("BDComics.txt");
+    if(archivoBD.is_open()){
+        int contadorArrayComics = 0, contador = 0;
+        while(getline(archivoBD, linea)){
+            if(contador == 0){
+                comics.emplace(comics.end());
+                comics[contadorArrayComics].setCodigo(linea);
+            }
+            if(contador == 1)
+                comics[contadorArrayComics].setCompania(linea);
+            if(contador == 2)
+                comics[contadorArrayComics].setNombre(linea);
+            if(contador == 3)
+                comics[contadorArrayComics].setPrecio(stoi(linea.c_str()));
+            if(contador == 4)
+                comics[contadorArrayComics].setFecha(linea);
+            if(contador == 5)
+                comics[contadorArrayComics].setCantidad(stoi(linea.c_str()));
+            if(contador == 6){
+                comics[contadorArrayComics].setOferta(stoi(linea.c_str()));
+                contadorArrayComics++;
+                contador = 0;
+                continue;
+            }
+            contador++;
+        }
+    } else{
+        cout << "No puedo abrir el archivo...";
+    }
+    archivoBD.close();
+}
+
 Inventario::~Inventario(){}
 
 ////////////////////////////////////////////////////////////////////
@@ -269,7 +279,7 @@ void ComicsAdquiridos::pedirNuevosComics(){
     } while(continuar);
 
     cout << "Desea imprimir la factura?: (1 - Si, 2 - No)";
-    cin >> answer;
+    getline(cin, answer);
     if(answer == "1"){
         this->imprimirRecibo(totalLotes);
     }
@@ -314,6 +324,7 @@ void ComicsAdquiridos::establecerComicsAdquiridos(){
 }
 
 void ComicsAdquiridos::organizarLotesAdquiridos(){
+    establecerComicsAdquiridos();
     bool encontrado = false;
     int indice = 0;
     for(int i = 0; i < comicsAdquiridos.size(); i++){
@@ -359,11 +370,13 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
         }
     }
     actualizarInventario();
-    remove("ComicsAdquiridos.txt");
-    fstream archivo;
-
-    archivo.open("ComicsAdquiridos.txt", std::ios_base::app);
-    archivo.close();
+    ofstream archivo("ComicsAdquiridos.txt");
+    if(archivo.is_open()){
+        archivo << "";  
+        archivo.close();
+    } else{
+        cout << "No se puede abrir el archivo" << endl;
+    }
 }
 
 void ComicsAdquiridos::mostrarComicsAdquiridos(){

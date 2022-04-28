@@ -113,54 +113,75 @@ void Empleado::venderComics(){
     string codigo;
     int nComics;
     float total;
-    int NIP;
-    string pagar;
+    string fecha; // Usada tambien en Ventas.h
 
+    vector<string> comicsComprados; //Nombre de Comics
+    vector<string> codigosComics;
+    vector<float> preciosIndividuales;
+    string vendedor;
+    cout << "Ingresa tu nombre (vendedor): ";
+    getline(cin, vendedor);
 
-    cout << "Cuantos comics vas a llevar? ";
+    cout << "Ingresa la fecha (DD/MM/AA): ";
+    getline(cin, fecha);
+
+    cout << "Cuantos comics se va a llevar el cliente? ";
     cin >> nComics;
     int indice = 0;
     
     cin.ignore();
     for(int i = 0; i < nComics; i++){
+        cout << "Sugerencia temporal (ASW202219 / GLX202224) " << endl;
         cout << "Ingresa el codigo del comic: ";
         getline(cin, codigo);
+        bool encontrado = false;
         for(int j = 0; j < comics.size(); j++){
             if(comics[j].getCodigo() == codigo){
                 indice = j;
+                encontrado = true;
                 break;
             }
         }
+        if(!encontrado){
+            cout << "No se encontro el comic " << endl;
+            return;
+        }
+        comicsComprados.push_back(comics[indice].getNombre());
+        codigosComics.push_back(comics[indice].getCodigo());
         float precioComic = comics[indice].getPrecio();
+        preciosIndividuales.push_back(precioComic);
+
         int cantidad = comics[indice].getCantidad();
         total += precioComic;
         comics[indice].setCantidad(cantidad-1);
     }
-    mostrarInventario();
-    cout << "El total a pagar es: " << total << endl;
 
-    // cout << "Ingrese su metodo de pago (Efectivo/Tarjeta) ";
-    // cin >> pagar;
-    // if(pagar == "tarjeta"){
-    //     cout << "Ingrese su NIP: ";
-    //     cin >> NIP;
-    //     cout << endl << "*Recibo*" << endl; //imprimirRecibo
-    //     cout << "Gracias por su compra! "; 
-    // }
-    // else if (pagar == "efectivo"){
-    //     int cantidadCliente;
-    //     cout << "Ingrese la cantidad con la que pagara: ";
-    //     cin >> cantidadCliente;
-    //     if(total < cantidadCliente){
-    //         cout << "El cambio a regresar: " << cantidadCliente - total << endl;
-    //         cout << "*Recibo*" << endl;
-    //         cout << "Gracias por su compra! ";
-    //     }
-    //     else if (total = cantidadCliente){
-    //         cout << "*Recibo*" << endl;
-    //         cout << "Gracias por su compra! ";
-    //     } 
-    // }
+    string pagar;
+    int NIP;
+    cout << "El total a pagar es: " << total << endl;
+    cout << "Ingrese su metodo de pago (1 - Efectivo/ 2 - Tarjeta): ";
+    getline(cin, pagar);
+    if(pagar == "2"){
+        cout << "Ingrese su NIP: ";
+        cin >> NIP;
+    }
+    else if (pagar == "1"){
+        int cantidadCliente;
+        cout << "Ingrese la cantidad con la que pagara: ";
+        cin >> cantidadCliente;
+        if(total < cantidadCliente){
+            cout << "El cambio a regresar: " << cantidadCliente - total << endl;
+        }
+    }
+    Recibo_del_cliente *recibo = new Recibo_del_cliente();
+    recibo->imprimirRecibo(vendedor, nComics, fecha, total, comicsComprados, codigosComics, preciosIndividuales);
+    cout << "Gracias por su compra!" << endl;
+    
+    actualizarInventario();
+
+    Ventas *ventas = new Ventas();
+    ventas->agregarVentas(codigosComics, fecha, vendedor);
+    ventas->actualizarVentas();
 }
 
 void Empleado::mostrarDatos(){
@@ -221,7 +242,7 @@ void Empleados::actualizarEmpleados(){
         }
         archivo.close();
     } else{
-        cout << "No puede abrir el archivo";
+        cout << "No se puede abrir el archivo" << endl;
     }
 }
 

@@ -15,13 +15,20 @@ int main(){
     while(continuar){
         string option;
         cout << "[1] Pedir comics a un proveedor\n";
-        cout << "[2] Organizar productos adquiridos\n";
+        cout << "[2] Organizar lotes adquiridos\n";
         cout << "[3] Editar informacion de comics\n";
         cout << "[4] Buscar comic\n";
         cout << "[5] Vender comics\n";
         cout << "[6] Conocer informacion sobre las ventas\n";
         cout << "[7] Registrar asistencia de empleados\n";
         cout << "[8] Ver sueldo a pagar a los empleados\n";
+        cout << "[9] Mostrar Comics Adquiridos\n";
+        cout << "[10] Imprimir Recibo Lotes Adquiridos\n";
+        cout << "[11] Mostrar empleados\n";
+        cout << "[12] Agregar empleados\n";
+        cout << "[13] Eliminar empleados\n";
+        cout << "[14] Actualizar empleados\n";
+        cout << "[15] Resetear asistencias\n";
         cout << "Eliga una opcion: ";
         getline(cin, option);
         if(option == "1"){
@@ -29,7 +36,7 @@ int main(){
         } else if(option == "2"){
             inventario->organizarLotesAdquiridos();
         } else if(option == "3"){
-            inventario->editarComics();
+            inventario->editarComic();
         } else if(option == "4"){
             string search;
             cout << "Ingresa el codigo del comic que deseas buscar: ";
@@ -43,7 +50,24 @@ int main(){
             gerente->registrarAsistenciaEmpleados();
         } else if(option == "8"){
             gerente->mostrarSueldoAPagarEmpleados();
-        } else {
+        } else if(option == "9"){
+            inventario->mostrarComicsAdquiridos();
+        } else if(option == "10"){
+            Recibo_lotes_adquiridos *recibo = new Recibo_lotes_adquiridos();
+            recibo->imprimirRecibo();
+        } else if(option == "11"){
+            Empleados *empleados = new Empleados();
+            empleados->mostrarEmpleados();
+        } else if(option == "12"){
+            gerente->registrarNuevoEmpleado();
+        } else if(option == "13"){
+            gerente->eliminarEmpleado();
+        } else if(option == "14"){
+            gerente->editarEmpleado();
+        } else if(option == "15"){
+            gerente->resetAsistencias();
+        }
+        else {
             cout << "La opcion que ingresaste es invalida!" << endl;
         }
         cout << "Pulse cualquier tecla para continuar..." << endl;

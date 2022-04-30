@@ -6,6 +6,7 @@ class Recibo{
         string fecha, hora, tipo_de_pago, nombre_tienda;
     public:
         Recibo();
+        virtual void imprimirRecibo();
         ~Recibo();
 };
 
@@ -18,7 +19,7 @@ class Recibo_del_cliente : public Recibo{
         int cantidad;
     public:
         Recibo_del_cliente();
-        void imprimirRecibo(string _vendedor, int _cantidad, string fecha, float total, vector<string> _comics, vector<string> _codigos, vector<float> precioIndividual);
+        void imprimirRecibo(string _vendedor, string fecha, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades);
         ~Recibo_del_cliente();
 };
 
@@ -30,7 +31,7 @@ class Recibo_lotes_adquiridos : public Recibo{
         vector<int> precio_lotes;
     public:
         Recibo_lotes_adquiridos();
-        void imprimirRecibo(int totalLotes);
+        void imprimirRecibo();
         ~Recibo_lotes_adquiridos();
 };
 
@@ -39,22 +40,33 @@ class Recibo_lotes_adquiridos : public Recibo{
 // Recibo
 Recibo::Recibo(){}
 
+void Recibo::imprimirRecibo(){
+    cout << "************************************\n";
+    cout << "RECIBO LOTES ADQUIRIDOS\n";
+    cout << "Proveedor: Comics SA\n";
+    cout << "Tienda: La cueva del comic\n";
+    cout << "Fecha de compra: 25/04/2022\n";
+    cout << "Hora de compra: 16:00 hrs\n";
+    cout << "************************************\n";
+}
+
 Recibo::~Recibo(){}
 
 ////////////////////////////////////////////////////////////////
-// Recibo cliente
+// RECIBO/FACTURA DEL CLIENTE
 Recibo_del_cliente::Recibo_del_cliente(){}
 
-void Recibo_del_cliente::imprimirRecibo(string _vendedor, int _cantidad, string fecha, float total, vector<string> _comics, vector<string> _codigos, vector<float> _precios){
+void Recibo_del_cliente::imprimirRecibo(string _vendedor, string fecha, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades){
     cout << "------- Recibo del Cliente --------\n";
     cout << "Sucursal: La cueva del Comic\n";
     cout << "Fecha: " << fecha << endl;
     cout << "Vendedor: " << _vendedor << endl;
     cout << "***********************\n";
-    for(int i = 0; i < _cantidad; i++){
-        cout << "Comic: " << _comics[i] << endl;
+    for(int i = 0; i < comicsComprados.size(); i++){
+        cout << "Comic: " << comicsComprados[i] << endl;
         cout << "Codigo: " << _codigos[i] << endl;
-        cout << "Precio: " << _precios[i] << endl;
+        cout << "Precio: " << preciosComics[i] << endl;
+        cout << "Cantidad: " << cantidades[i] << endl; 
         cout << "------------" << endl;
     }
     cout << "Total: " << total << " MXN\n";
@@ -62,21 +74,16 @@ void Recibo_del_cliente::imprimirRecibo(string _vendedor, int _cantidad, string 
 
 Recibo_del_cliente::~Recibo_del_cliente(){}
 
-// Recibo lotes adquiridos
+////////////////////////////////////////////////////////////////
+// RECIBO LOTES ADQUIRIDOS
 Recibo_lotes_adquiridos::Recibo_lotes_adquiridos(){}
 
-void Recibo_lotes_adquiridos::imprimirRecibo(int totalLotes){
+void Recibo_lotes_adquiridos::imprimirRecibo(){
+    Recibo::imprimirRecibo();
     string linea;
-    int contador = 0, precio_individual = 0, total = 0;
-    ifstream archivoComicsAdquiridos("ComicsAdquiridos.txt");
+    int contador = 0, precio_individual = 0, totalLotes = 0, total = 0;
+    ifstream archivoComicsAdquiridos("ComicsAdquiridos.dat");
 
-    cout << "************************************\n";
-    cout << "Proveedor: Comics SA\n";
-    cout << "Tienda: La cueva del comic\n";
-    cout << "Fecha de compra: 25/04/2022\n";
-    cout << "Hora de compra: 16:00 hrs\n";
-    cout << "Cantidad total de lotes comprados: " << totalLotes << endl;
-    cout << "************************************\n";
     if(archivoComicsAdquiridos.is_open()){
         while(getline(archivoComicsAdquiridos, linea)){
             if(contador == 0){
@@ -85,19 +92,22 @@ void Recibo_lotes_adquiridos::imprimirRecibo(int totalLotes){
             if(contador == 1) cout << "Compania: " << linea << "\n";
             if(contador == 2) cout << "Comic: " << linea << "\n";
             if(contador == 3){
-                cout << "Precio: " << stoi(linea.c_str()) << endl;
                 precio_individual = stoi(linea.c_str());
+                cout << "Precio: " << precio_individual << endl;
             }
             if(contador == 4){
                 cout << "Fecha publicacion: " << linea << endl;
             }
             if(contador == 5){
-                int totalPorComic = precio_individual * stoi(linea);
-                cout << "Cantidad de lotes: " << linea << endl;
+                int totalPorComic = 20 * precio_individual * stoi(linea.c_str());
                 total += totalPorComic;
+
+                cout << "Cantidad de lotes: " << linea << endl;
+                totalLotes += stoi(linea.c_str());
+
                 cout << "Total por este comic: " << totalPorComic << endl;
                 contador = 0;
-                cout << "--  --\n";
+                cout << "----------------------------------------\n";
                 continue;
             }
             contador++;
@@ -107,7 +117,8 @@ void Recibo_lotes_adquiridos::imprimirRecibo(int totalLotes){
         cout << "No se puede abrir el archivo...";
     }
     cout << "**********************" << endl;
-    cout << "Total a pagar: " << total << endl;
+    cout << "Cantidad total de lotes comprados: " << totalLotes << endl;
+    cout << "Total a pagar: " << total << endl << endl;
 }
 
 Recibo_lotes_adquiridos::~Recibo_lotes_adquiridos(){}

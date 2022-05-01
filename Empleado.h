@@ -99,7 +99,9 @@ void Empleado::setAsistencia(int _asistencia){
 bool modificarE(string text){
     string option;
     cout << "Deseas modificar " << text << "? (1 - Si, 2 - No): " << endl;
-    getline(cin, option);
+    while(option != "1" && option != "2"){
+        getline(cin, option);
+    }
     if(option == "1"){
         return true;
     }
@@ -121,16 +123,32 @@ void Empleado::modificarDatos(){
 
     cout << "Sueldo: " << this->sueldo << endl;
     if(modificarE("el sueldo")){
-        cout << "Ingresa el sueldo: ";
-        cin >> this->sueldo;
-        cin.ignore();
+        string _sueldo;
+        while(true){
+            cout << "Ingresa el sueldo: ";
+            getline(cin, _sueldo);
+            if(validarNumeroFlotante(_sueldo)){
+                this->sueldo = stoi(_sueldo.c_str());
+                break;
+            } else{
+                cout << "Ingresa un sueldo valido" << endl;
+            }
+        }
     }
 
     cout << "Asistencia: " << this->asistenciaEmpleado << endl;
     if(modificarE("la asistencia")){
-        cout << "Ingresa la nueva asistencia: ";
-        cin >> asistenciaEmpleado;
-        cin.ignore();
+        string _asistencia;
+        while(true){
+            cout << "Ingresa la nueva asistencia: ";
+            getline(cin, _asistencia);
+            if(validarNumero(_asistencia)){
+                this->asistenciaEmpleado = stoi(_asistencia.c_str());
+                break;
+            } else{
+                cout << "Ingresa un numero valido" << endl;
+            }
+        }
     }
 }
 
@@ -163,7 +181,6 @@ void Empleado::venderComics(){
 
     int contador = 0;
     while(true){
-        cout << "Sugerencia temporal (ASW202219 / GLX202224) " << endl;
         cout << "Ingresa el codigo del comic: ";
         getline(cin, codigo);
 
@@ -181,9 +198,17 @@ void Empleado::venderComics(){
         int cantidad;
 
         while(true){
-            cout << "Cuantos ejemplares se llevara el cliente de este comic? ";
-            cin >> cantidad;
-            cin.ignore();
+            string _cantidad;
+            while(true){
+                cout << "Cuantos ejemplares se llevara el cliente de este comic? ";
+                getline(cin, _cantidad);
+                if(validarNumero(_cantidad)){
+                    cantidad = stoi(_cantidad.c_str());
+                    break;
+                } else{
+                    cout << "Ingresa una cantidad valida" << endl;
+                }
+            }
             if(cantidadDisponible < cantidad){
                 cout << "No quedan suficientes ejemplares disponibles\n";
                 cout << "Ingrese otra cantidad\n";
@@ -199,7 +224,9 @@ void Empleado::venderComics(){
 
         string option;
         cout << "Desea agregar otro comic? (1 - Si, 2 - No): ";
-        getline(cin, option);
+        while(option != "1" && option != "2"){
+            getline(cin, option);
+        }
         if(option != "1") break;
     }
 
@@ -209,15 +236,18 @@ void Empleado::venderComics(){
     cout << "Ingresar nombre del vendedor: ";
     getline(cin, vendedor);
 
-    cout << "Ingresa la fecha (DD/MM/AA): ";
-    getline(cin, fecha);
+    cout << "Ingresa la fecha...: ";
+    fecha = ingresarFecha();
 
     string pagar;
     int NIP;
     cout << "El total a pagar es: " << total << " MXN" << endl;
     while (true){   
         cout << "Ingrese su metodo de pago (1 - Efectivo/ 2 - Tarjeta): ";
-        getline(cin, pagar);
+        while(pagar != "1" && pagar != "2"){
+            getline(cin, pagar);
+
+        }
         if(pagar == "1" | pagar == "2") break;
     }
     
@@ -229,7 +259,16 @@ void Empleado::venderComics(){
         int pagoCliente;
         while(true){
             cout << "Ingrese la cantidad con la que pagara: ";
-            cin >> pagoCliente;
+            string _pago;
+            while(true){
+                getline(cin, _pago);
+                if(validarNumeroFlotante(_pago)){
+                    pagoCliente = stof(_pago.c_str());
+                    break;
+                } else{
+                    cout << "Ingresa una cantidad valida" << endl;
+                }
+            }
             if(pagoCliente < total){
                 cout << "El total a pagar es mayor!\n";
                 cout << "Ingrese nuevamente el pago del cliente\n";
@@ -345,7 +384,16 @@ void Gerente::registrarNuevoEmpleado(){
     cout << "Ingresa el rfc del empleado: ";
     getline(cin, rfc);
     cout << "Ingresa el sueldo del empleado: ";
-    cin >> sueldo;
+    string _sueldo;
+    while(true){
+        getline(cin, _sueldo);
+        if(validarNumeroFlotante(_sueldo)){
+            sueldo = stof(_sueldo.c_str());
+            break;
+        } else{
+            cout << "Ingresa un sueldo valido" << endl;
+        }
+    }
     empleados[empleados.size()-1].setDatos(nombre, rfc, sueldo);
     guardarEmpleados();
 }
@@ -406,16 +454,19 @@ void Gerente::editarEmpleado(){
 
 void Gerente::registrarAsistenciaEmpleados(){
     cargarEmpleados();
-    int asistenciaEmpleado;
     for(int i = 0; i < empleados.size(); i++){
         cout << "Asistencia de " << empleados[i].getNombre() << endl;
         cout << "[1] Asisitio   [0] No asistio " << endl;
-        cin >> asistenciaEmpleado;
-        if(asistenciaEmpleado != 1) continue;
+        string asistenciaEmpleado;
+        while(asistenciaEmpleado != "1" && asistenciaEmpleado != "0"){
+            cin >> asistenciaEmpleado;
+        }
+        if(asistenciaEmpleado != "1") continue;
 
         int asistencia = empleados[i].getAsistencia();
         empleados[i].setAsistencia(asistencia + 1);
     }
+    cin.ignore();
     guardarEmpleados();
     cout << "Informacion actualizada\n";
 }

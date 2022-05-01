@@ -12,6 +12,7 @@ class Inventario{
         int buscarIndiceComic(string search); //regresa indice de un comic buscado
         void editarComic();
         void eliminarComicsVendidos();
+        void eliminarComic();
         void mostrarInventario();
         void guardarInventario();
         void cargarInventario();
@@ -108,8 +109,17 @@ void Inventario::eliminarComicsVendidos(){
         if(comics[i].getCodigo() == codigo){
             encontrado = true;
             indice = i;
-            cout << "Ingresa la cantidad vendida de ese comic: ";
-            cin >> cantidad;
+            string _cantidad;
+            while(true){
+                cout << "Ingresa la cantidad vendida de ese comic: ";
+                getline(cin, _cantidad);
+                if(validarNumero(_cantidad)){
+                    cantidad = stoi(_cantidad.c_str());
+                    break;
+                } else{
+                    cout << "Ingresa una cantidad valida" << endl;
+                }
+            }
         }
     }
     if(!encontrado){
@@ -124,10 +134,36 @@ void Inventario::eliminarComicsVendidos(){
     guardarInventario();
 }
 
+void Inventario::eliminarComic(){
+    cargarInventario();
+    string codigo;
+    int indice;
+    bool encontrado;
+    cout << "Ingresa el codigo del comic vendido: ";
+    getline(cin, codigo);
+
+    for(int i = 0; i < comics.size(); i++){
+        if(comics[i].getCodigo() == codigo){
+            encontrado = true;
+            indice = i;
+        }
+    }
+    if(!encontrado){
+        cout << "No se encontro el comic\n";
+        return;
+    }
+    
+    comics[indice].mostrarDatos();
+    comics.erase(comics.begin()+indice);
+    guardarInventario();
+}
+
 void Inventario::mostrarInventario(){
+    cout << "INVENTARIO DE COMICS" << endl;
+    cout << "---------------------------\n";
     for(int i = 0; i < comics.size(); i++){
         comics[i].mostrarDatos();
-        cout << "************\n";
+        cout << "---------------------------\n";
     }
 }
 
@@ -198,7 +234,6 @@ ComicsAdquiridos::ComicsAdquiridos(){}
 
 void ComicsAdquiridos::pedirNuevosComics(){
     cargarInventarioComicsAdquiridos();
-    string answer;
 
     do {
         this->comicsAdquiridos.emplace(comicsAdquiridos.end());
@@ -206,8 +241,10 @@ void ComicsAdquiridos::pedirNuevosComics(){
         comicsAdquiridos[size-1].setDatos();
 
         cout << "Desea continuar (1 - Si, 2 - No): ";
-        cin.ignore();
-        getline(cin, answer);
+        string answer;
+        while(answer != "1" && answer != "2"){
+            getline(cin, answer);
+        }
         if(answer == "2"){
             break;
         }
@@ -216,8 +253,11 @@ void ComicsAdquiridos::pedirNuevosComics(){
 
     guardarComicsAdquiridos();
 
+    string answer;
     cout << "Desea imprimir la factura?: (1 - Si, 2 - No)";
-    getline(cin, answer);
+    while(answer != "1" && answer != "2"){
+        getline(cin, answer);
+    }
     if(answer == "1"){
         Recibo_lotes_adquiridos *reciboLotes = new Recibo_lotes_adquiridos();
         reciboLotes->imprimirRecibo();
@@ -281,21 +321,28 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             this->comics[indice].setCantidad(cant + comicsAdquiridos[i].getNLotes() * 20);
 
 
-            int newPrecio;
-            char option[5];
+            float newPrecio;
+            string option;
             cout << "Precio actual en inventario: " << comics[indice].getPrecio() << endl;
             cout << "Precio actual del lote: " << comicsAdquiridos[indice].getPrecio() << endl;
-            cout << "Ingrese el nuevo precio del comic: ";
-            cin >> newPrecio;
-            this->comics[indice].setPrecio(newPrecio);
-
-            cin.ignore();
+            string _precio;
+            while(true){
+                cout << "Ingrese el nuevo precio del comic: ";
+                getline(cin, _precio);
+                if(validarNumero(_precio)){
+                    newPrecio = stof(_precio.c_str());
+                    break;
+                }
+            }
+            this->comics[indice].setPrecio((float) newPrecio);
 
             bool oferta = comics[indice].getOferta();
             if(oferta)cout << "El comic esta en oferta" << endl;
             if(!oferta) cout << "El comic no esta en oferta" << endl;
             cout << "Desea cambiar el estado de la oferta? (1-Si, 0-No): ";
-            cin.getline(option, 5);
+            while(option != "1" && option != "0"){
+                getline(cin, option);
+            }
             if(option == "1") this->comics[indice].setOferta(!oferta);
         } 
         else{
@@ -304,23 +351,33 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             cout << "-------------------------\n";
 
             float newPrecio;
-            char option[5];
+            string option;
             this->comics.emplace(comics.end());
             this->comics[comics.size()-1].setCodigo(comicsAdquiridos[i].getCodigo());
             this->comics[comics.size()-1].setCompania(comicsAdquiridos[i].getCompania());
             this->comics[comics.size()-1].setNombre(comicsAdquiridos[i].getNombre());
 
             cout << "Precio actual del lote: " << comicsAdquiridos[indice].getPrecio() << endl;
-            cout << "Ingrese el nuevo precio del comic: ";
-            cin >> newPrecio;
+            string _precio;
+            while(true){
+                cout << "Ingrese el nuevo precio del comic: ";
+                getline(cin, _precio);
+                if(validarNumero(_precio)){
+                    newPrecio = stof(_precio.c_str());
+                    break;
+                } else{
+                    cout << "Ingrese un precio valido"<< endl;
+                }
+            }
             this->comics[comics.size()-1].setPrecio((float) newPrecio);
-            cin.ignore();
 
             this->comics[comics.size()-1].setFecha(comicsAdquiridos[i].getFecha());
             this->comics[comics.size()-1].setCantidad(comicsAdquiridos[i].getNLotes() * 20);
 
             cout << "El comic esta en oferta? (1-Si, 0-No): ";
-            cin.getline(option, 5);
+            while(option != "1" && option != "0"){
+                getline(cin, option);
+            }
             if(option == "1") this->comics[comics.size()-1].setOferta(true);
             if(option == "2") this->comics[comics.size()-1].setOferta(false);
         }

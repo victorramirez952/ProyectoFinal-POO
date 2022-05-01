@@ -54,24 +54,28 @@ void Comic::setDatos(){
     cout << "Ingresa el nombre del comic: ";
     getline(cin, this->nombre);
     cout << "Ingresa el precio individual del comic: ";
-    cin >> precio;
-    cout << "Ingresa el dia de publicacion: ";
-    cin.ignore();
-    cin >> dia;
-    cout << "Ingresa el mes de publicacion: ";
-    cin.ignore();
-    cin >> mes;
-    cout << "Ingresa el anio de publicacion: ";
-    cin.ignore();
-    cin >> anio;
-    this->fecha = dia + "/" + mes + "/" + anio;
+
+    string precio;
+    while(true){
+        getline(cin, precio);
+        if(validarNumeroFlotante(precio)){
+            this->precio = stof(precio);
+            break;
+        } else{
+            cout << "Ingrese un precio valido" << endl;
+        }
+    }
+
+    this->fecha = ingresarFecha();
 }
 
 //Funcion utilizada para modificar datos
 bool modificar(string text){
     string option;
     cout << "Deseas modificar " << text << "? (1 - Si, 2 - No): " << endl;
-    getline(cin, option);
+    while(option != "1" && option != "2"){
+        getline(cin, option);
+    }
     if(option == "1"){
         return true;
     }
@@ -93,29 +97,51 @@ void Comic::modificarDatos(){
 
     cout << "Precio: " << this->precio << endl;
     if(modificar("el precio")){
-        cout << "Ingresa el nuevo precio: ";
-        cin >> this->precio;
-        cin.ignore();
+        string _precio;
+        while(true){
+            cout << "Ingrese el nuevo precio: ";
+            getline(cin, _precio);
+            if(validarNumeroFlotante(_precio)){
+                this->precio = stof(_precio);
+                break;
+            } else{
+                cout << "Ingrese un precio valido" << endl;
+            }
+        }
     }
 
     cout << "Fecha: " << this->fecha << endl;
     if(modificar("la fecha")){
-        cout << "Ingresa la nueva fecha: ";
-        getline(cin, this->fecha);
+        this->fecha = ingresarFecha();
     }
     
     cout << "Cantidad: " << this->cantidad << endl;
     if(modificar("la cantidad")){
-        cout << "Ingresa la nueva cantidad: ";
-        cin >> cantidad;
-        cin.ignore();
+        string _cantidad;
+        while (true){
+            cout << "Ingresa la nueva cantidad: ";
+            getline(cin, _cantidad);
+            if(validarNumero(_cantidad)){
+                this->cantidad = stoi(_cantidad.c_str());
+                break;
+            } else{
+                cout << "Ingrese una cantidad valida" << endl;
+            }
+        }
     }
     
     if(this->oferta)
         cout << "El comic esta en oferta" << endl;
-    cout << "Deseas cambiar el estado de la oferta del comic (1-Si, 2-NO): ";
     string option;
-    getline(cin, option);
+    while(true){
+        cout << "Deseas cambiar el estado de la oferta del comic (1-Si, 2-NO): ";
+        getline(cin, option);
+        if(validarNumeroRango(option, 1, 2)){
+            break;
+        } else{
+            cout << "Opcion invalida" << endl;
+        }
+    }
     if(option == "1")
         this->oferta = !this->oferta;
 }
@@ -195,9 +221,17 @@ ComicAdquirido::ComicAdquirido(){}
 
 void ComicAdquirido::setDatos(){
     Comic::setDatos();
-    cout << "Ingresa la cantidad de lotes a comprar del comic (cada lote tiene 20 comics): ";
-    cin.ignore();
-    cin >> this->nLotes;
+    string _nLotes;
+    while (true){
+        cout << "Ingresa la cantidad de lotes a comprar del comic (cada lote tiene 20 comics): ";
+        getline(cin, _nLotes);
+        if(validarNumero(_nLotes)){
+            this->nLotes = stoi(_nLotes.c_str());
+            break;
+        } else{
+            cout << "Ingrese un numero valido" << endl;
+        }
+    }
 }
 
 void ComicAdquirido::setNLotes(int _nLotes){

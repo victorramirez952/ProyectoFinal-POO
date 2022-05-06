@@ -171,7 +171,6 @@ int Empleado::getAsistencia(){
 
 
 void Empleado::venderComics(){
-    string codigo;
     float total;
 
     vector<string> codigosComics;
@@ -181,6 +180,34 @@ void Empleado::venderComics(){
 
     int contador = 0;
     while(true){
+        cargarInventario();
+        string codigo;
+        bool ans, nombreEncontrado = false;
+
+        cout << question << "Conoces el codigo del comic? (1 - Si, 2 - No): ";
+        ans = validarSiNo();
+        
+        if(!ans){ // búsqueda de Comic por nombre
+            while(true){
+                string nombre;
+                while (nombre.length() < 3)
+                {
+                    cout << "Ingresa el nombre del comic: ";
+                    getline(cin, nombre); 
+                }
+                nombreEncontrado = buscarComicNombre(nombre);
+                if(!nombreEncontrado){
+                    cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
+                    ans = validarSiNo();
+                    if(!ans) break;
+                } else{
+                    break;;
+                }
+            }
+            
+        }
+        if(!nombreEncontrado & !ans) break;
+
         cout << "Ingresa el codigo del comic: ";
         getline(cin, codigo);
 
@@ -200,11 +227,12 @@ void Empleado::venderComics(){
         while(true){
             string _cantidad;
             while(true){
-                cout << "Cuantos ejemplares se llevara el cliente de este comic? ";
+                cout << question << "Cuantos ejemplares se llevara el cliente de este comic? ";
                 getline(cin, _cantidad);
                 if(validarNumero(_cantidad)){
                     cantidad = stoi(_cantidad.c_str());
-                    break;
+                    if(cantidad > 0) break;
+                    continue;
                 } else{
                     cout << "Ingresa una cantidad valida" << endl;
                 }
@@ -218,29 +246,28 @@ void Empleado::venderComics(){
             break;
         }
         
-        comics[indice].setCantidad(cantidadDisponible - cantidad);
+        this->comics[indice].setCantidad(cantidadDisponible - cantidad);
         total += precioComic * cantidad;
         contador++;
 
         string option;
-        cout << "Desea agregar otro comic? (1 - Si, 2 - No): ";
+        guardarInventario();
+        cout << question << "Desea agregar otro comic? (1 - Si, 2 - No): ";
         while(option != "1" && option != "2"){
             getline(cin, option);
         }
         if(option != "1") break;
     }
 
+
+    // Pago del cliente
     string vendedor;
-    string fecha; // Usada tambien en Recibo_del_cliente
     
     cout << "Ingresar nombre del vendedor: ";
     getline(cin, vendedor);
 
-    cout << "Ingresa la fecha...: ";
-    fecha = ingresarFecha();
-
     string pagar;
-    int NIP;
+    string NIP;
     cout << "El total a pagar es: " << total << " MXN" << endl;
     while (true){   
         cout << "Ingrese su metodo de pago (1 - Efectivo/ 2 - Tarjeta): ";
@@ -253,7 +280,7 @@ void Empleado::venderComics(){
     
     if(pagar == "2"){
         cout << "Ingrese su NIP: ";
-        cin >> NIP;
+        getline(cin, NIP);
     }
     else if (pagar == "1"){
         int pagoCliente;
@@ -283,14 +310,14 @@ void Empleado::venderComics(){
 
     cout << "Pago realizado!" << endl;
 
+    // Impreción de Ticket
     Recibo_del_cliente *recibo = new Recibo_del_cliente();
-    recibo->imprimirRecibo(vendedor, fecha, total, comicsComprados, codigosComics, preciosIndividuales, cantidadesCompradas);
+    recibo->imprimirRecibo(vendedor, total, comicsComprados, codigosComics, preciosIndividuales, cantidadesCompradas);
     cout << "Gracias por su compra!" << endl;
     
-    guardarInventario();
 
     Ventas *ventas = new Ventas();
-    ventas->agregarVentas(codigosComics, preciosIndividuales, cantidadesCompradas, fecha, vendedor);
+    ventas->agregarVentas(codigosComics, preciosIndividuales, cantidadesCompradas, vendedor);
 }
 
 void Empleado::mostrarDatos(){
@@ -341,11 +368,16 @@ void Empleados::cargarEmpleados(){
 
 void Empleados::mostrarEmpleados(){
     cargarEmpleados();
-    cout << "---------------------------------" << endl;
-    for(int i = 0; i < empleados.size(); i++){
+    cout << "-- EMPLEADOS --\n";
+    cout << "\n************************************\n";
+    int sizeArray = empleados.size();
+    for(int i = 0; i < sizeArray; i++){
         empleados[i].mostrarDatos();
-        cout << "------------------------" << endl;
+        if(i != sizeArray-1){
+            cout << "------------------------------------\n";
+        }
     }
+    cout << "\n************************************\n";
 }
 
 void Empleados::guardarEmpleados(){
@@ -359,7 +391,7 @@ void Empleados::guardarEmpleados(){
         }
         archivo.close();
     } else{
-        cout << "No se puede abrir el archivo" << endl;
+        cout << "No se puede abrir el archivo 'Empleados.dat'" << endl;
     }
 }
 
@@ -396,6 +428,7 @@ void Gerente::registrarNuevoEmpleado(){
     }
     empleados[empleados.size()-1].setDatos(nombre, rfc, sueldo);
     guardarEmpleados();
+    cout << "Empleado agregado con exito!" << endl;
 }
 
 void Gerente::eliminarEmpleado(){
@@ -411,12 +444,12 @@ void Gerente::eliminarEmpleado(){
         }
     }
     if(!encontrado){
-        cout << "No se encontro el empleado\n";
+        cout << "No se encontro el empleado con el rfc: " << rfc << endl;
         return;
     }
     empleados.erase(empleados.begin()+indice);
     guardarEmpleados();
-    cout << "Empleado eliminado!" << endl;
+    cout << "Empleado eliminado satisfactoriamente!" << endl;
 }
 
 void Gerente::resetAsistencias(){
@@ -425,6 +458,7 @@ void Gerente::resetAsistencias(){
         empleados[i].setAsistencia(0);
     }
     guardarEmpleados();
+    cout << "Asistencia de los empleados reiniciada con exito!\n";
 }
 
 void Gerente::editarEmpleado(){
@@ -444,7 +478,7 @@ void Gerente::editarEmpleado(){
         }
     }
     if(!encontrado){
-        cout << "No se encontro el empleado\n";
+        cout << "No se encontro el empleado con el rfc: " << rfc << "\n";
         return;
     }
     empleados[indice].modificarDatos();
@@ -468,13 +502,16 @@ void Gerente::registrarAsistenciaEmpleados(){
     }
     cin.ignore();
     guardarEmpleados();
-    cout << "Informacion actualizada\n";
+    cout << "Asistencia de los empleados registrada con exito!\n";
 }
 
 void Gerente::mostrarSueldoAPagarEmpleados(){
     cargarEmpleados();
-    cout << "------------------------" << endl;
-    for(int i = 0; i < empleados.size(); i++){
+    cout << "-- SUELDO A PAGAR A EMPLEADOS --\n";
+    cout << "************************************\n";
+    float totalPagarEmpleados = 0;
+    int sizeArray = empleados.size();
+    for(int i = 0; i < sizeArray; i++){
         Empleado empleadoi = empleados[i];
         cout << "Nombre: " << empleadoi.getNombre() << endl;
         cout << "Sueldo Semanal: " << empleadoi.getSueldo() << " MXN" << endl;
@@ -484,8 +521,14 @@ void Gerente::mostrarSueldoAPagarEmpleados(){
 
         int total_pagar = (asistencia * empleadoi.getSueldo()) / 6;
         cout << "Total a pagar: " << total_pagar << " MXN" << endl;
-        cout << "------------------------" << endl;
+        totalPagarEmpleados += total_pagar;
+        if(i != sizeArray-1){
+            cout << "------------------------------------\n";
+        }
     }
+    cout << "************************************\n";
+    cout << "Total a pagar a los empleados: " << totalPagarEmpleados << " MXN" << endl;
+    cout << "************************************\n\n";
 }
 
 Gerente::~Gerente(){}

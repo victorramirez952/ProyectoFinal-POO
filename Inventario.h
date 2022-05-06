@@ -8,7 +8,9 @@ class Inventario{
         int total_comics;
     public:
         Inventario();
-        void buscarComic(string search);
+        void buscarComic();
+        void buscarComicCodigo(string search);
+        bool buscarComicNombre(string search);
         int buscarIndiceComic(string search); //regresa indice de un comic buscado
         void editarComic();
         void eliminarComicsVendidos();
@@ -37,7 +39,40 @@ Inventario::Inventario(){
     cargarInventario();
 }
 
-void Inventario::buscarComic(string search){
+void Inventario::buscarComic(){
+    bool ans;
+    string nombre, codigo;
+
+    cout << question << "Conoces el codigo del comic? (1 - Si, 2 - No): ";
+    ans = validarSiNo();
+    if(!ans){
+        bool nombreEncontrado = false;
+        while(!nombreEncontrado){
+            while (nombre.length() <= 3)
+            {
+               cout << "Ingresa el nombre del comic: ";
+                getline(cin, nombre); 
+            }
+            
+            nombreEncontrado = buscarComicNombre(nombre);
+            if(!nombreEncontrado){
+                cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
+                ans = validarSiNo();
+                if(!ans) break;
+            } else{
+                break;
+            }
+        }
+    
+    } else{
+        cout << "Ingrese el codigo del comic: ";
+        getline(cin, codigo);
+        buscarComicCodigo(codigo);
+    }
+}
+
+
+void Inventario::buscarComicCodigo(string search){
     bool encontrado = false;
     cargarInventario();
     for(int i = 0; i < comics.size(); i++){
@@ -52,6 +87,24 @@ void Inventario::buscarComic(string search){
     if(!encontrado){
         cout << "No se encontro el comic con el codigo " << search << endl;
     }
+}
+
+bool Inventario::buscarComicNombre(string search){
+    bool encontrado = false;
+    cargarInventario();
+    for(int i = 0; i < comics.size(); i++){
+        if(toUpper(comics[i].getNombre()).find(toUpper(search)) != string::npos){
+            cout << "\nComic encontrado!\n\n";
+            encontrado = true;
+            comics[i].mostrarDatos();
+            cout << endl;
+        }
+    }
+    if(!encontrado){
+        cout << "No se encontro el comic llamado " << search << endl;
+        return false;
+    }
+    return true;
 }
 
 int Inventario::buscarIndiceComic(string search){
@@ -75,8 +128,33 @@ int Inventario::buscarIndiceComic(string search){
 
 void Inventario::editarComic(){
     cargarInventario();
-    string codigo;
+    string codigo, nombre;
     int indice;
+
+    bool ans;
+
+    cout << question << "Conoces el codigo del comic? (1 - Si, 2 - No): ";
+    ans = validarSiNo();
+
+    if(!ans){
+        bool nombreEncontrado = false;
+        while(!nombreEncontrado){
+            while (nombre.length() <= 3)
+            {
+               cout << "Ingresa el nombre del comic: ";
+                getline(cin, nombre); 
+            }
+            
+            nombreEncontrado = buscarComicNombre(nombre);
+            if(!nombreEncontrado){
+                cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
+                ans = validarSiNo();
+                if(!ans) break;
+            } else{
+                break;
+            }
+        }
+    }
 
     bool encontrado = false;
     cout << "Ingresa el codigo del comic que vas a editar: ";
@@ -104,7 +182,7 @@ void Inventario::eliminarComicsVendidos(){
     bool encontrado;
     cout << "Ingresa el codigo del comic vendido: ";
     getline(cin, codigo);
-    buscarComic(codigo);
+    buscarComicCodigo(codigo);
     for(int i = 0; i < comics.size(); i++){
         if(comics[i].getCodigo() == codigo){
             encontrado = true;
@@ -136,8 +214,33 @@ void Inventario::eliminarComicsVendidos(){
 
 void Inventario::eliminarComic(){
     cargarInventario();
-    string codigo;
+    string codigo, nombre;
     int indice;
+    bool ans;
+
+    cout << question << "Conoces el codigo del comic? (1 - Si, 2 - No): ";
+    ans = validarSiNo();
+
+    if(!ans){
+        bool nombreEncontrado = false;
+        while(!nombreEncontrado){
+            while (nombre.length() <= 3)
+            {
+               cout << "Ingresa el nombre del comic: ";
+                getline(cin, nombre); 
+            }
+            
+            nombreEncontrado = buscarComicNombre(nombre);
+            if(!nombreEncontrado){
+                cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
+                ans = validarSiNo();
+                if(!ans) break;
+            } else{
+                break;
+            }
+        }
+    }
+
     bool encontrado;
     cout << "Ingresa el codigo del comic vendido: ";
     getline(cin, codigo);
@@ -156,6 +259,7 @@ void Inventario::eliminarComic(){
     comics[indice].mostrarDatos();
     comics.erase(comics.begin()+indice);
     guardarInventario();
+    cout << "Comic eliminado satisfactoriamente!\n";
 }
 
 void Inventario::mostrarInventario(){
@@ -240,7 +344,9 @@ void ComicsAdquiridos::pedirNuevosComics(){
         int size = comicsAdquiridos.size();
         comicsAdquiridos[size-1].setDatos();
 
-        cout << "Desea continuar (1 - Si, 2 - No): ";
+        cout << "Comic agregado al inventario de Comics Adquiridos\n";
+
+        cout << question << "Desea continuar? (1 - Si, 2 - No): ";
         string answer;
         while(answer != "1" && answer != "2"){
             getline(cin, answer);
@@ -254,7 +360,7 @@ void ComicsAdquiridos::pedirNuevosComics(){
     guardarComicsAdquiridos();
 
     string answer;
-    cout << "Desea imprimir la factura?: (1 - Si, 2 - No)";
+    cout << question << "Desea imprimir la factura? (1 - Si, 2 - No): ";
     while(answer != "1" && answer != "2"){
         getline(cin, answer);
     }
@@ -313,9 +419,9 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             }
         }
         if(encontrado){
-            cout << "Comic #" << i+1 << endl;
+            cout << "------------------------------------\n";
+            cout << "Comic #" << i+1 << endl << endl;
             comicsAdquiridos[i].mostrarDatos();
-            cout << "-------------------------\n";
 
             int cant = this->comics[indice].getCantidad();
             this->comics[indice].setCantidad(cant + comicsAdquiridos[i].getNLotes() * 20);
@@ -335,20 +441,24 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
                 }
             }
             this->comics[indice].setPrecio((float) newPrecio);
+            cout << "Precio actualizado correctamente!" << endl;
 
             bool oferta = comics[indice].getOferta();
             if(oferta)cout << "El comic esta en oferta" << endl;
             if(!oferta) cout << "El comic no esta en oferta" << endl;
-            cout << "Desea cambiar el estado de la oferta? (1-Si, 0-No): ";
-            while(option != "1" && option != "0"){
+            cout << question << "Desea cambiar el estado de la oferta? (1 - Si, 2 - No): ";
+            while(option != "1" & option != "2"){
                 getline(cin, option);
             }
-            if(option == "1") this->comics[indice].setOferta(!oferta);
+            if(option == "1"){
+                this->comics[indice].setOferta(!oferta);
+                cout << "El estado de oferta del comic ha sido cambiado correctamente!" << endl;
+            }
         } 
         else{
+            cout << "------------------------------------\n";
             cout << "Comic #" << i+1 << endl;
             comicsAdquiridos[i].mostrarDatos();
-            cout << "-------------------------\n";
 
             float newPrecio;
             string option;
@@ -370,34 +480,38 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
                 }
             }
             this->comics[comics.size()-1].setPrecio((float) newPrecio);
+            cout << "Precio actualizado correctamente!" << endl;
 
             this->comics[comics.size()-1].setFecha(comicsAdquiridos[i].getFecha());
             this->comics[comics.size()-1].setCantidad(comicsAdquiridos[i].getNLotes() * 20);
 
-            cout << "El comic esta en oferta? (1-Si, 0-No): ";
-            while(option != "1" && option != "0"){
+            cout << question << "El comic esta en oferta? (1 - Si, 2 - No): ";
+            while(option != "1" & option != "2"){
                 getline(cin, option);
             }
             if(option == "1") this->comics[comics.size()-1].setOferta(true);
             if(option == "2") this->comics[comics.size()-1].setOferta(false);
+            cout << "Estado de oferta del comic establecido correctamente!" << endl;
         }
     }
     guardarInventario();
+    cout << "\nTodos los comics han sido organizados correctamente en el inventario de comics\n";
     ofstream archivo("ComicsAdquiridos.dat");
     if(archivo.is_open()){
         archivo << ""; 
         archivo.close();
     } else{
-        cout << "No se puede abrir el archivo" << endl;
+        cout << "No se puede abrir el archivo 'ComicsAdquiridos.dat'" << endl;
     }
+    cout << "El inventario de Comics Adquiridos ha sido actualizado correctamente!\n";
 }
 
 void ComicsAdquiridos::mostrarComicsAdquiridos(){
     cargarInventarioComicsAdquiridos();
-    cout << "MOSTRANDO LOTES ADQUIRIDOS..." << endl; 
+    cout << "-- MOSTRANDO LOTES ADQUIRIDOS --" << endl; 
     for(int i = 0; i < comicsAdquiridos.size(); i++){
         comicsAdquiridos[i].mostrarDatos();
-        cout << "----------------------" << endl; 
+        cout << "------------------------------------\n"; 
     }
 }
         
@@ -413,7 +527,7 @@ void ComicsAdquiridos::guardarComicsAdquiridos(){
             archivo << comicsAdquiridos[i].getNLotes() << endl;
         }
     } else{
-        cout << "No se pudo abrir el archivo ComicsAdquiridos" << endl; 
+        cout << "No se pudo abrir el archivo 'ComicsAdquiridos.dat'" << endl; 
     }
     archivo.close();
 }

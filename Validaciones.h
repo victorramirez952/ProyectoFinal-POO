@@ -19,7 +19,7 @@ bool validarNumeroFlotante(string x){
 bool validarDia(string x){
     if(x.find_first_not_of("0123456789") == string::npos){
         int variable = stoi(x.c_str());
-        if(variable >= 0 && variable <= 32){
+        if(variable > 0 && variable <= 32){
             return true;
         }
     }
@@ -29,7 +29,7 @@ bool validarDia(string x){
 bool validarMes(string x){
     if(x.find_first_not_of("0123456789") == string::npos){
         int variable = stoi(x.c_str());
-        if(variable >= 0 & variable <= 12){
+        if(variable > 0 & variable <= 12){
             return true;
         }
     }
@@ -110,4 +110,14 @@ string ingresarFecha(){
     }
     string fecha = dia + "/" + mes + "/" + anio;
     return fecha;
+}
+
+bool validarSiNo(){
+    string answer;
+    // (1 - Si, 2 - No):
+    while(answer != "1" & answer != "2"){
+        getline(cin, answer);
+    }
+    if(answer == "1") return true;
+    return false;
 }

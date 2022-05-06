@@ -9,7 +9,7 @@ class Ventas : public Inventario{
         vector<float> preciosComics;
     public:
         Ventas();
-        void agregarVentas(vector<string> _codigos, vector<float> preciosIndividuales, vector<int> cantidadesVendidas, string fecha, string vendedor);
+        void agregarVentas(vector<string> _codigos, vector<float> preciosIndividuales, vector<int> cantidadesVendidas, string vendedor);
         void mostrarDatosVentas();
         void guardarVentas();
         void cargarVentas();
@@ -22,7 +22,7 @@ Ventas::Ventas(){
     cargarVentas();
 }
 
-void Ventas::agregarVentas(vector<string> _codigos, vector<float> preciosIndividuales, vector<int> cantidadesVendidas, string fecha, string vendedor){
+void Ventas::agregarVentas(vector<string> _codigos, vector<float> preciosIndividuales, vector<int> cantidadesVendidas, string vendedor){
     // _codigos son los nuevos codigos que llegan
     // codigos son los que ya estaban en el archivo
     bool encontrado;
@@ -37,16 +37,17 @@ void Ventas::agregarVentas(vector<string> _codigos, vector<float> preciosIndivid
             }
         }
         if(encontrado){
-            fechasVenta[indice] = fecha;
+            fechasVenta[indice] = getFechaActual();
             cantidadVendida[indice] += cantidadesVendidas[i];
             if(vendedores[indice].find(vendedor) == std::string::npos){
                 vendedores[indice] += ", " + vendedor;
             }
         } else{
             codigos.push_back(_codigos[i]);    
-            fechasVenta.push_back(fecha);
+            fechasVenta.push_back(getFechaActual());
             vendedores.push_back(vendedor);
             cantidadVendida.push_back(1);
+            preciosComics.push_back(preciosIndividuales[i]);
         }
     }
     guardarVentas();
@@ -54,15 +55,20 @@ void Ventas::agregarVentas(vector<string> _codigos, vector<float> preciosIndivid
 
 void Ventas::mostrarDatosVentas(){
     cargarVentas();
-    cout << "***********************************\n";
+    cout << "-- Ventas --\n";
+    cout << "\n************************************\n";
+    int sizeArray = codigos.size();
     for(int i = 0; i < codigos.size(); i++){
         cout << "Codigo: " << codigos[i] << endl;
         cout << "Fecha de venta mas reciente: " << fechasVenta[i] << endl;
         cout << "Vendido por: " << vendedores[i] << endl;
         cout << "Cantidad total vendida: " << cantidadVendida[i] << endl;
         cout << "Precio del comic vendido: " << preciosComics[i] << endl;
-        cout << "-----------------\n";
+        if(i != sizeArray-1){
+            cout << "------------------------------------\n";
+        }
     }
+    cout << "\n************************************\n";
     cout << "Cantidad total de comics vendidos: " << this->ventas_totales << endl;
     cout << "Total Ganado: " << this->total_ganado << " MXN" << endl;
 }

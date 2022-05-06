@@ -4,20 +4,14 @@
 #include "stdlib.h"
 using namespace std;
 
+#include "VariablesGlobales.h"
+
 #include "Validaciones.h"
+#include "Funcionalidades.h"
 #include "Inventario.h"
 #include "Ventas.h"
 #include "Empleado.h"
 
-const char question = 168;
-const char enie = 164;
-
-const string ADMIN = "RaulM";
-const string PADMIN = "sensishito";
-const string GERENTE = "BetoS";
-const string PGERENTE = "andatti";
-const string VENDEDOR = "Victor";
-const string PVENDEDOR = "ventas234";
 
 int main(){
     Gerente *objGerente = new Gerente("Alberto Alvarez", "VATL900113MW8");
@@ -92,9 +86,7 @@ int main(){
                         inventario->mostrarInventario();
                         break;
                     case 3:
-                        cout << "Ingrese el codigo del comic a buscar: ";
-                        getline(cin, codigo);
-                        inventario->buscarComic(codigo);
+                        inventario->buscarComic();
                         break;
                     case 4:
                         recibo->imprimirRecibo();
@@ -186,9 +178,7 @@ int main(){
                         empleado->venderComics();
                         break;
                     case 2:
-                        cout << "Ingrese el codigo del comic: ";
-                        getline(cin, codigo);
-                        inventario->buscarComic(codigo);
+                        inventario->buscarComic();
                         break;
                     case 3:
                         inventario->mostrarInventario();
@@ -259,9 +249,7 @@ int main(){
                         inventario->mostrarInventario();
                         break;
                     case 2:
-                        cout << "Ingrese el codigo del comic a buscar: ";
-                        getline(cin, codigo);
-                        inventario->buscarComic(codigo);
+                        inventario->buscarComic();
                         break;
                     case 3:
                         inventario->editarComic();

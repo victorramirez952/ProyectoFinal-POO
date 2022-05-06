@@ -53,7 +53,8 @@ void Comic::setDatos(){
     getline(cin, this->compania);
     cout << "Ingresa el nombre del comic: ";
     getline(cin, this->nombre);
-    cout << "Ingresa el precio individual del comic: ";
+    cout << "Ingresa el precio individual del comic (MXN): ";
+
 
     string precio;
     while(true){
@@ -65,6 +66,8 @@ void Comic::setDatos(){
             cout << "Ingrese un precio valido" << endl;
         }
     }
+
+    cout << "Ingresar fecha de publicacion del comic\n";
 
     this->fecha = ingresarFecha();
 }

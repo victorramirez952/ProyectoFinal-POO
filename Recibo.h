@@ -17,7 +17,7 @@ class Recibo_del_cliente : public Recibo{
         int cantidad;
     public:
         Recibo_del_cliente();
-        void imprimirRecibo(string _vendedor, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades);
+        void imprimirRecibo(string _vendedor, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades, int pagoCliente);
         ~Recibo_del_cliente();
 };
 
@@ -54,7 +54,7 @@ Recibo::~Recibo(){}
 // RECIBO/FACTURA DEL CLIENTE
 Recibo_del_cliente::Recibo_del_cliente(){}
 
-void Recibo_del_cliente::imprimirRecibo(string _vendedor, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades){
+void Recibo_del_cliente::imprimirRecibo(string _vendedor, float total, vector<string> comicsComprados, vector<string> _codigos, vector<float> preciosComics, vector<int> cantidades, int pagoCliente){
     cout << "\n------- RECIBO DEL CLIENTE --------\n";
     cout << "************************************\n";
     cout << "Sucursal: " <<  nombreTienda << "\n";
@@ -74,6 +74,8 @@ void Recibo_del_cliente::imprimirRecibo(string _vendedor, float total, vector<st
     }
     cout << "************************************\n";
     cout << "Total: " << total << " MXN\n";
+    cout << "Pago con: " << pagoCliente << " MXN\n";
+    cout << "Su cambio: " << pagoCliente-total << " MXN\n"; 
     cout << "************************************\n\n";
 }
 

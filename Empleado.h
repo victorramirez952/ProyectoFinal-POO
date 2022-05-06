@@ -278,12 +278,12 @@ void Empleado::venderComics(){
         if(pagar == "1" | pagar == "2") break;
     }
     
+    int pagoCliente;
     if(pagar == "2"){
         cout << "Ingrese su NIP: ";
         getline(cin, NIP);
     }
     else if (pagar == "1"){
-        int pagoCliente;
         while(true){
             cout << "Ingrese la cantidad con la que pagara: ";
             string _pago;
@@ -302,7 +302,6 @@ void Empleado::venderComics(){
                 continue;
             }
             if(total <= pagoCliente){
-                cout << "El cambio a regresar: " << pagoCliente - total << endl;
                 break;
             }
         }
@@ -312,7 +311,7 @@ void Empleado::venderComics(){
 
     // Impreción de Ticket
     Recibo_del_cliente *recibo = new Recibo_del_cliente();
-    recibo->imprimirRecibo(vendedor, total, comicsComprados, codigosComics, preciosIndividuales, cantidadesCompradas);
+    recibo->imprimirRecibo(vendedor, total, comicsComprados, codigosComics, preciosIndividuales, cantidadesCompradas, pagoCliente);
     cout << "Gracias por su compra!" << endl;
     
 

@@ -38,7 +38,7 @@ int main(){
         string gerente;
         string pGerente;
         do{
-            cout << "Log in del Gerente " << endl;
+            cout << "\n-- LOG IN DEL GERENTE --" << endl;
             cout << "Ingrese el usuario del gerente: ";
             getline(cin, gerente);
             cout << "Ingrese la contrase" << enie << "a del gerente: ";
@@ -143,7 +143,7 @@ int main(){
         string vendedor;
         string pVendedor;
         do{
-            cout << "Log in del Vendedor " << endl;
+            cout << "\n-- LOG IN DEL VENDEDOR -- " << endl;
             cout << "Ingrese el usuario del vendedor: ";
             getline(cin, vendedor);
             cout << "Ingrese la contrase" << enie << "a del vendedor: ";
@@ -212,7 +212,7 @@ int main(){
         string admin;
         string pAdmin;
         do{
-            cout << "Log in del Administrador " << endl;
+            cout << "\n-- LOG IN DEL ADMINISTRADOR -- " << endl;
             cout << "Ingrese el usuario del administrador: ";
             getline(cin, admin);
             cout << "Ingrese la contrase" << enie << "a del administrador: ";

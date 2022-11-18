@@ -51,3 +51,14 @@ string toUpper(string cadena) {
   for (int i = 0; i < cadena.length(); i++) cadena[i] = toupper(cadena[i]);
   return cadena;
 }
+
+int getAnioActual(){
+    time_t t = time(NULL);
+	tm* timePtr = localtime(&t);
+    
+
+    stringstream ss_year;
+    ss_year << timePtr->tm_year+1900;
+    string Year = ss_year.str();
+    return stoi(Year.c_str());
+} 

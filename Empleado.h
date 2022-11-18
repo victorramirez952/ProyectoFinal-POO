@@ -1,5 +1,5 @@
-#include "fstream"
-#include "vector"
+#include <fstream>
+#include <vector>
 class Persona{
     protected:
         string nombre, rfc;
@@ -46,7 +46,6 @@ class Empleados{
 };
 
 class Gerente : public Persona, public Empleados{
-    private:
     public:
         Gerente();
         Gerente(string _nombre, string _rfc);
@@ -101,6 +100,7 @@ bool modificarE(string text){
     cout << "Deseas modificar " << text << "? (1 - Si, 2 - No): " << endl;
     while(option != "1" && option != "2"){
         getline(cin, option);
+        if(option != "1" && option != "2") printf("Opcion invalida\n");
     }
     if(option == "1"){
         return true;
@@ -111,14 +111,18 @@ bool modificarE(string text){
 void Empleado::modificarDatos(){
     cout << "RFC: " << this->rfc << endl;
     if(modificarE("el RFC")){
-        cout << "Ingresa el nuevo RFC: ";
-        getline(cin, this->rfc);
+        do{
+            cout << "Ingresa el nuevo RFC del empleado: ";
+            getline(cin, rfc);
+        }while(!validarStringVacio(rfc) || rfc.size() < 12);
     }
 
     cout << "Nombre: " << this->nombre << endl;
     if(modificarE("el nombre del empleado")){
-        cout << "Ingresa el nuevo nombre: ";
-        getline(cin, this->nombre);
+        do{
+            cout << "Ingresa el nuevo nombre del empleado: ";
+            getline(cin, nombre);
+        }while(!validarNombrePersona(nombre));
     }
 
     cout << "Sueldo: " << this->sueldo << endl;
@@ -127,12 +131,15 @@ void Empleado::modificarDatos(){
         while(true){
             cout << "Ingresa el sueldo: ";
             getline(cin, _sueldo);
-            if(validarNumeroFlotante(_sueldo)){
-                this->sueldo = stoi(_sueldo.c_str());
-                break;
-            } else{
-                cout << "Ingresa un sueldo valido" << endl;
+            if(validarStringVacio(_sueldo)){
+                if(validarNumeroFlotante(_sueldo)){
+                    this->sueldo = stoi(_sueldo.c_str());
+                    break;
+                } else{
+                    cout << "Ingresa un sueldo valido" << endl;
+                }
             }
+            
         }
     }
 
@@ -142,11 +149,13 @@ void Empleado::modificarDatos(){
         while(true){
             cout << "Ingresa la nueva asistencia: ";
             getline(cin, _asistencia);
-            if(validarNumero(_asistencia)){
-                this->asistenciaEmpleado = stoi(_asistencia.c_str());
-                break;
-            } else{
-                cout << "Ingresa un numero valido" << endl;
+            if(validarStringVacio(_asistencia)){
+                if(validarNumero(_asistencia)){
+                    this->asistenciaEmpleado = stoi(_asistencia.c_str());
+                    break;
+                } else{
+                    cout << "Ingresa un numero valido" << endl;
+                }
             }
         }
     }
@@ -204,12 +213,13 @@ void Empleado::venderComics(){
                     break;;
                 }
             }
-            
         }
         if(!nombreEncontrado & !ans) break;
 
-        cout << "Ingresa el codigo del comic: ";
-        getline(cin, codigo);
+        do{
+            cout << "Ingresa el codigo del comic: ";
+            getline(cin, codigo);
+        }while(!validarCodigo(codigo));
 
         int indice = buscarIndiceComic(codigo);
         if(indice < 0){
@@ -229,12 +239,14 @@ void Empleado::venderComics(){
             while(true){
                 cout << question << "Cuantos ejemplares se llevara el cliente de este comic? ";
                 getline(cin, _cantidad);
-                if(validarNumero(_cantidad)){
-                    cantidad = stoi(_cantidad.c_str());
-                    if(cantidad > 0) break;
-                    continue;
-                } else{
-                    cout << "Ingresa una cantidad valida" << endl;
+                if(validarStringVacio(_cantidad)){
+                    if(validarNumero(_cantidad)){
+                        cantidad = stoi(_cantidad.c_str());
+                        if(cantidad > 0) break;
+                        continue;
+                    } else{
+                        cout << "Ingresa una cantidad valida" << endl;
+                    }
                 }
             }
             if(cantidadDisponible < cantidad){
@@ -255,6 +267,7 @@ void Empleado::venderComics(){
         cout << question << "Desea agregar otro comic? (1 - Si, 2 - No): ";
         while(option != "1" && option != "2"){
             getline(cin, option);
+            if(option != "1" && option != "2") printf("Opcion invalida\n");
         }
         if(option != "1") break;
     }
@@ -263,8 +276,10 @@ void Empleado::venderComics(){
     // Pago del cliente
     string vendedor;
     
-    cout << "Ingresar nombre del vendedor: ";
-    getline(cin, vendedor);
+    do{
+        cout << "Ingresar nombre del vendedor: ";
+        getline(cin, vendedor);
+    }while(!validarNombrePersona(vendedor));
 
     string pagar;
     string NIP;
@@ -273,7 +288,7 @@ void Empleado::venderComics(){
         cout << "Ingrese su metodo de pago (1 - Efectivo/ 2 - Tarjeta): ";
         while(pagar != "1" && pagar != "2"){
             getline(cin, pagar);
-
+            if(pagar != "1" && pagar != "2") printf("Opcion invalida\n");
         }
         if(pagar == "1" | pagar == "2") break;
     }
@@ -289,11 +304,13 @@ void Empleado::venderComics(){
             string _pago;
             while(true){
                 getline(cin, _pago);
-                if(validarNumeroFlotante(_pago)){
-                    pagoCliente = stof(_pago.c_str());
-                    break;
-                } else{
-                    cout << "Ingresa una cantidad valida" << endl;
+                if(validarStringVacio(_pago)){
+                    if(validarNumeroFlotante(_pago)){
+                        pagoCliente = stof(_pago.c_str());
+                        break;
+                    } else{
+                        cout << "Ingresa una cantidad valida" << endl;
+                    }
                 }
             }
             if(pagoCliente < total){
@@ -309,7 +326,7 @@ void Empleado::venderComics(){
 
     cout << "Pago realizado!" << endl;
 
-    // Impreción de Ticket
+    // Impresión de Ticket
     Recibo_del_cliente *recibo = new Recibo_del_cliente();
     recibo->imprimirRecibo(vendedor, total, comicsComprados, codigosComics, preciosIndividuales, cantidadesCompradas, pagoCliente);
     cout << "Gracias por su compra!" << endl;
@@ -336,28 +353,19 @@ Empleados::Empleados(){
 
 void Empleados::cargarEmpleados(){
     empleados.clear();
-    string linea;
-    ifstream archivo("Empleados.dat");
+    ifstream archivo;
+    archivo.open("Empleados.dat");
     int contador = 0, contadorArray = 0;
+    string rfc, nombre, sueldo, asistencia;
     if(archivo.is_open()){
-        while(getline(archivo, linea)){
-            if(contador == 0){
+        while(archivo >> rfc >> nombre >> sueldo >> asistencia){
                 empleados.emplace(empleados.end());
-                empleados[contadorArray].setRFC(linea);
-            }
-            if(contador == 1){
-                empleados[contadorArray].setNombre(linea);
-            }
-            if(contador == 2){
-                empleados[contadorArray].setSueldo(stof(linea));
-            }
-            if(contador == 3){
-                empleados[contadorArray].setAsistencia(stoi(linea.c_str()));
-                contador = 0;
+                empleados[contadorArray].setRFC(rfc);
+                std::replace(nombre.begin(), nombre.end(), '-', ' ');
+                empleados[contadorArray].setNombre(nombre);
+                empleados[contadorArray].setSueldo(stof(sueldo.c_str()));
+                empleados[contadorArray].setAsistencia(stoi(asistencia.c_str()));
                 contadorArray++;
-                continue;
-            }
-            contador++;
         }
     } else{
         cout << "No se pudo abrir el archivo\n";
@@ -383,9 +391,13 @@ void Empleados::guardarEmpleados(){
     ofstream archivo("Empleados.dat");
     if(archivo.is_open()){
         for(int i = 0; i < empleados.size(); i++){
-            archivo << empleados[i].getRFC() << endl;
-            archivo << empleados[i].getNombre() << endl;
-            archivo << empleados[i].getSueldo() << endl;
+            archivo << empleados[i].getRFC() << " ";
+
+            string nombre = empleados[i].getNombre();
+            std::replace(nombre.begin(), nombre.end(), ' ', '-');
+            archivo << nombre << " ";
+
+            archivo << empleados[i].getSueldo() << " ";
             archivo << empleados[i].getAsistencia() << endl;
         }
         archivo.close();
@@ -410,19 +422,28 @@ void Gerente::registrarNuevoEmpleado(){
     string nombre, rfc;
     float sueldo;
     empleados.emplace(empleados.end());
-    cout << "Ingresa el nombre del empleado: ";
-    getline(cin, nombre);
-    cout << "Ingresa el rfc del empleado: ";
-    getline(cin, rfc);
+
+    do{
+        cout << "Ingresa el nombre del empleado: ";
+        getline(cin, nombre);
+    }while(!validarNombrePersona(nombre));
+    
+    do{
+        cout << "Ingresa el rfc del empleado: ";
+        getline(cin, rfc);
+    }while(!validarStringVacio(rfc) || rfc.size() < 12);
+
     cout << "Ingresa el sueldo del empleado: ";
     string _sueldo;
     while(true){
         getline(cin, _sueldo);
-        if(validarNumeroFlotante(_sueldo)){
-            sueldo = stof(_sueldo.c_str());
-            break;
-        } else{
-            cout << "Ingresa un sueldo valido" << endl;
+        if(validarStringVacio(_sueldo)){
+            if(validarNumeroFlotante(_sueldo)){
+                sueldo = stof(_sueldo.c_str());
+                break;
+            } else{
+                cout << "Ingresa un sueldo valido" << endl;
+            }
         }
     }
     empleados[empleados.size()-1].setDatos(nombre, rfc, sueldo);
@@ -434,8 +455,12 @@ void Gerente::eliminarEmpleado(){
     string rfc;
     int indice;
     bool encontrado;
-    cout << "Ingresa el rfc del empleado a eliminar: ";
-    getline(cin, rfc);
+
+    do{
+        cout << "Ingresa el rfc del empleado: ";
+        getline(cin, rfc);
+    }while(!validarStringVacio(rfc) || rfc.size() < 12);
+
     for(int i = 0; i < empleados.size(); i++){
         if(empleados[i].getRFC() == rfc){
             encontrado = true;
@@ -466,10 +491,14 @@ void Gerente::editarEmpleado(){
     int indice;
 
     bool encontrado = false;
-    cout << "Ingresa el RFC del empleado que vas a editar: ";
-    getline(cin, rfc);
+    do{
+        cout << "Ingresa el rfc del empleado: ";
+        getline(cin, rfc);
+    }while(!validarStringVacio(rfc) || rfc.size() < 12);
+    
     for(int i = 0; i < empleados.size(); i++){
         if(empleados[i].getRFC() == rfc){
+            cout << endl;
             empleados[i].mostrarDatos();
             encontrado = true;
             indice = i;
@@ -492,7 +521,10 @@ void Gerente::registrarAsistenciaEmpleados(){
         cout << "[1] Asisitio   [0] No asistio " << endl;
         string asistenciaEmpleado;
         while(asistenciaEmpleado != "1" && asistenciaEmpleado != "0"){
-            cin >> asistenciaEmpleado;
+            getline(cin, asistenciaEmpleado);
+            if(asistenciaEmpleado != "1" && asistenciaEmpleado != "0"){
+                printf("Opcion invalida\n");
+            }
         }
         if(asistenciaEmpleado != "1") continue;
 

@@ -87,36 +87,31 @@ Recibo_lotes_adquiridos::Recibo_lotes_adquiridos(){}
 
 void Recibo_lotes_adquiridos::imprimirRecibo(){
     Recibo::imprimirRecibo();
-    string linea;
-    int contador = 0, precio_individual = 0, totalLotes = 0, total = 0;
-    ifstream archivoComicsAdquiridos("ComicsAdquiridos.dat");
+    int precio_individual = 0, totalLotes = 0, total = 0;
+    string codigo, compania, comic, precio, fecha, nLotes;
+    ifstream archivoComicsAdquiridos;
+    archivoComicsAdquiridos.open("ComicsAdquiridos.dat");
     if(archivoComicsAdquiridos.is_open()){
-        while(getline(archivoComicsAdquiridos, linea)){
-            if(contador == 0){
-                cout << "Codigo: " << linea << endl;
-            }
-            if(contador == 1) cout << "Compania: " << linea << "\n";
-            if(contador == 2) cout << "Comic: " << linea << "\n";
-            if(contador == 3){
-                precio_individual = stoi(linea.c_str());
+        while(archivoComicsAdquiridos >> codigo >> compania >> comic >> precio >> fecha >> nLotes){
+                cout << "Codigo: " << codigo << endl;
+
+                std::replace(compania.begin(), compania.end(), '-', ' ');
+                cout << "Compania: " << compania << endl;
+
+                std::replace(comic.begin(), comic.end(), '-', ' ');
+                cout << "Comic: " << comic << endl;
+
+                precio_individual = stoi(precio.c_str());
                 cout << "Precio: " << precio_individual << endl;
-            }
-            if(contador == 4){
-                cout << "Fecha publicacion: " << linea << endl;
-            }
-            if(contador == 5){
-                int totalPorComic = 20 * precio_individual * stoi(linea.c_str());
+                cout << "Fecha publicacion: " << fecha << endl;
+                int totalPorComic = 20 * precio_individual * stoi(nLotes.c_str());
                 total += totalPorComic;
 
-                cout << "Cantidad de lotes: " << linea << endl;
-                totalLotes += stoi(linea.c_str());
+                cout << "Cantidad de lotes (20 comics c/u): " << nLotes << endl;
+                totalLotes += stoi(nLotes.c_str());
 
                 cout << "Total por este comic: " << totalPorComic << " MXN" << endl;
-                contador = 0;
                 cout << "------------------------------------\n";
-                continue;
-            }
-            contador++;
         }
         archivoComicsAdquiridos.close();
     } else{

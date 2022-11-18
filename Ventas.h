@@ -1,5 +1,5 @@
 #include "vector"
-class Ventas : public Inventario{
+class Ventas{
     private:
         float total_ganado, ventas_totales;
         vector<string> codigos;
@@ -77,10 +77,11 @@ void Ventas::guardarVentas(){
     ofstream archivo("Ventas.dat");
     if(archivo.is_open()){
         for(int i = 0; i < codigos.size(); i++){
-            archivo << codigos[i] << endl;
-            archivo << fechasVenta[i] << endl;
-            archivo << vendedores[i] << endl;
-            archivo << cantidadVendida[i] << endl;
+            archivo << codigos[i] << " ";
+            archivo << fechasVenta[i] << " ";
+            std::replace(vendedores[i].begin(), vendedores[i].end(), ' ', '-');
+            archivo << vendedores[i] << " ";
+            archivo << cantidadVendida[i] << " ";
             archivo << preciosComics[i] << endl;
         }
     } else{
@@ -96,38 +97,26 @@ void Ventas::cargarVentas(){
     ventas_totales = 0;
     total_ganado = 0;
 
-    string linea;
-    ifstream archivo("Ventas.dat");
-    int contador = 0, contadorArrayComics = 0;
+    ifstream archivo;
+    archivo.open("Ventas.dat");
+    string codigo, fecha, vendors, cantidad, precio;
     if(archivo.is_open()){
         int cantComicsVendidos;
-        while(getline(archivo, linea)){
-            if(contador == 0){
-                codigos.push_back(linea);
-            }
-            if(contador == 1){
-                fechasVenta.push_back(linea);
-            }
-            if(contador == 2){
-                vendedores.push_back(linea);
-            }
-            if(contador == 3){
-                cantComicsVendidos = stoi(linea.c_str());
+        while(archivo >> codigo >> fecha >> vendors >> cantidad >> precio){
+                codigos.push_back(codigo);
+                fechasVenta.push_back(fecha);
+                std::replace(vendors.begin(), vendors.end(), '-', ' ');
+                vendedores.push_back(vendors);
+
+                cantComicsVendidos = stoi(cantidad.c_str());
                 this->ventas_totales += cantComicsVendidos;
                 cantidadVendida.push_back(cantComicsVendidos);
-            }
-            if(contador == 4){
-                int precioIndividual = stoi(linea.c_str());
+
+                int precioIndividual = stoi(precio.c_str());
                 preciosComics.push_back(precioIndividual);
 
                 this->total_ganado += precioIndividual * cantComicsVendidos;
                 cantComicsVendidos = 0;
-
-                contadorArrayComics++;
-                contador = 0;
-                continue;
-            }
-            contador++;
         }
     } else{
         cout << "No se pudo abrir el archivo" << endl;

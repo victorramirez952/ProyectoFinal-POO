@@ -1,7 +1,8 @@
-#include "vector"
 #include "Comic.h"
 #include "Recibo.h"
-#include "fstream"
+#include <vector>
+#include <fstream>
+#include <algorithm>
 class Inventario{
     protected:
         vector<Comic> comics;
@@ -59,9 +60,8 @@ void Inventario::buscarComic(){
                 cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
                 ans = validarSiNo();
                 if(!ans) break;
-            } else{
-                break;
             }
+            nombre = "";
         }
     
     } else{
@@ -221,12 +221,12 @@ void Inventario::eliminarComic(){
     cout << question << "Conoces el codigo del comic? (1 - Si, 2 - No): ";
     ans = validarSiNo();
 
+    bool nombreEncontrado = false;
     if(!ans){
-        bool nombreEncontrado = false;
         while(!nombreEncontrado){
             while (nombre.length() <= 3)
             {
-               cout << "Ingresa el nombre del comic: ";
+                cout << "Ingresa el nombre del comic: ";
                 getline(cin, nombre); 
             }
             
@@ -235,15 +235,17 @@ void Inventario::eliminarComic(){
                 cout << "Desea continuar buscando? (1 - Si, 2 - No): ";
                 ans = validarSiNo();
                 if(!ans) break;
-            } else{
-                break;
             }
+            nombre = "";
         }
     }
 
+    if(!nombreEncontrado) return;
     bool encontrado;
-    cout << "Ingresa el codigo del comic vendido: ";
-    getline(cin, codigo);
+    do{
+        cout << "Ingresa el codigo del comic vendido: ";
+        getline(cin, codigo);
+    }while(!validarCodigo(codigo));
 
     for(int i = 0; i < comics.size(); i++){
         if(comics[i].getCodigo() == codigo){
@@ -275,12 +277,19 @@ void Inventario::guardarInventario(){
     ofstream archivo("BDComics.dat");
     if(archivo.is_open()){
         for(int i = 0; i < comics.size(); i++){
-            archivo << comics[i].getCodigo() << endl;
-            archivo << comics[i].getCompania() << endl;
-            archivo << comics[i].getNombre() << endl;
-            archivo << comics[i].getPrecio() << endl;
-            archivo << comics[i].getFecha() << endl;
-            archivo << comics[i].getCantidad() << endl;
+            archivo << comics[i].getCodigo() << " ";
+
+            string compania = comics[i].getCompania();
+            std::replace(compania.begin(), compania.end(), ' ', '-');
+            archivo << compania << " ";
+            
+            string nombre = comics[i].getNombre();
+            std::replace(nombre.begin(), nombre.end(), ' ', '-');
+            archivo << nombre << " ";
+
+            archivo << comics[i].getPrecio() << " ";
+            archivo << comics[i].getFecha() << " ";
+            archivo << comics[i].getCantidad() << " ";
             if(comics[i].getOferta()){
                 archivo << 1 << endl;
             } else{
@@ -295,34 +304,25 @@ void Inventario::guardarInventario(){
 
 void Inventario::cargarInventario(){
     comics.clear();
-    string linea;
-    ifstream archivoBD("BDComics.dat");
+    ifstream archivoBD;
+    archivoBD.open("BDComics.dat");
+    string codigo, compania, nombre, precio, fecha, cantidad, oferta;
     if(archivoBD.is_open()){
         int contadorArrayComics = 0, contador = 0;
-        while(getline(archivoBD, linea)){
-            if(contador == 0){
-                comics.emplace(comics.end());
-                comics[contadorArrayComics].setCodigo(linea);
-            }
-            if(contador == 1)
-                comics[contadorArrayComics].setCompania(linea);
-            if(contador == 2)
-                comics[contadorArrayComics].setNombre(linea);
-            if(contador == 3)
-                comics[contadorArrayComics].setPrecio(stoi(linea.c_str()));
-            if(contador == 4)
-                comics[contadorArrayComics].setFecha(linea);
-            if(contador == 5)
-                comics[contadorArrayComics].setCantidad(stoi(linea.c_str()));
-
-            if(contador == 6){
-                comics[contadorArrayComics].setOferta(stoi(linea.c_str()));
-                contadorArrayComics++;
-                contador = 0;
-                continue;
-            }
-            contador++;
-        }
+        while (archivoBD >> codigo >> compania >> nombre >> precio >> fecha >> cantidad >> oferta)
+    {
+        comics.emplace(comics.end());
+        comics[contadorArrayComics].setCodigo(codigo);
+        std::replace(compania.begin(), compania.end(), '-', ' ');
+        comics[contadorArrayComics].setCompania(compania);
+        std::replace(nombre.begin(), nombre.end(), '-', ' ');
+        comics[contadorArrayComics].setNombre(nombre);
+        comics[contadorArrayComics].setPrecio(stoi(precio.c_str()));
+        comics[contadorArrayComics].setFecha(fecha);
+        comics[contadorArrayComics].setCantidad(stoi(cantidad.c_str()));
+        comics[contadorArrayComics].setOferta(stoi(oferta.c_str()));
+        contadorArrayComics++;
+    }
     } else{
         cout << "No se puede abrir el archivo BDComics.dat\n";
         exit(1);
@@ -338,7 +338,6 @@ ComicsAdquiridos::ComicsAdquiridos(){}
 
 void ComicsAdquiridos::pedirNuevosComics(){
     cargarInventarioComicsAdquiridos();
-
     do {
         this->comicsAdquiridos.emplace(comicsAdquiridos.end());
         int size = comicsAdquiridos.size();
@@ -350,6 +349,7 @@ void ComicsAdquiridos::pedirNuevosComics(){
         string answer;
         while(answer != "1" && answer != "2"){
             getline(cin, answer);
+            if(answer != "1" && answer != "2") printf("Opcion invalida\n");
         }
         if(answer == "2"){
             break;
@@ -363,6 +363,7 @@ void ComicsAdquiridos::pedirNuevosComics(){
     cout << question << "Desea imprimir la factura? (1 - Si, 2 - No): ";
     while(answer != "1" && answer != "2"){
         getline(cin, answer);
+        if(answer != "1" && answer != "2") printf("Opcion invalida\n");
     }
     if(answer == "1"){
         Recibo_lotes_adquiridos *reciboLotes = new Recibo_lotes_adquiridos();
@@ -373,37 +374,28 @@ void ComicsAdquiridos::pedirNuevosComics(){
 
 void ComicsAdquiridos::cargarInventarioComicsAdquiridos(){
     comicsAdquiridos.clear();
-    string linea;
-    ifstream archivo("ComicsAdquiridos.dat");
+    ifstream archivo;
+    archivo.open("ComicsAdquiridos.dat");
+    string codigo, compania, nombre, precio, fecha, nLotes;
     if(archivo.is_open()){
-        int contadorArrayComics = 0, contador = 0;
-        while(getline(archivo, linea)){
-            if(contador == 0){
-                comicsAdquiridos.emplace(comicsAdquiridos.end());
-                comicsAdquiridos[contadorArrayComics].setCodigo(linea);
-            }
-            if(contador == 1)
-                comicsAdquiridos[contadorArrayComics].setCompania(linea);
-            if(contador == 2)
-                comicsAdquiridos[contadorArrayComics].setNombre(linea);
-            if(contador == 3)
-                comicsAdquiridos[contadorArrayComics].setPrecio(stoi(linea.c_str()));
-            if(contador == 4)
-                comicsAdquiridos[contadorArrayComics].setFecha(linea);
-            if(contador == 5){
-                comicsAdquiridos[contadorArrayComics].setNLotes(stoi(linea.c_str())); // cada lote tienen 20 comics
-                contadorArrayComics++;
-                contador = 0;
-                continue;
-            }
-            contador++;
+        int contadorArrayComicsA = 0;
+        while (archivo >> codigo >> compania >> nombre >> precio >> fecha >> nLotes){
+            comicsAdquiridos.emplace(comicsAdquiridos.end());
+            comicsAdquiridos[contadorArrayComicsA].setCodigo(codigo);
+            std::replace(compania.begin(), compania.end(), '-', ' ');
+            comicsAdquiridos[contadorArrayComicsA].setCompania(compania);
+            std::replace(nombre.begin(), nombre.end(), '-', ' ');
+            comicsAdquiridos[contadorArrayComicsA].setNombre(nombre);
+            comicsAdquiridos[contadorArrayComicsA].setPrecio(stoi(precio.c_str()));
+            comicsAdquiridos[contadorArrayComicsA].setFecha(fecha);
+            comicsAdquiridos[contadorArrayComicsA].setNLotes(stoi(nLotes.c_str())); // cada lote tienen 20 comics
+            contadorArrayComicsA++;
         }
     } else{
         cout << "No puedo abrir el archivo...";
         archivo.close();
         return;
     }
-    archivo.close();
 }
 
 void ComicsAdquiridos::organizarLotesAdquiridos(){
@@ -435,9 +427,11 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             while(true){
                 cout << "Ingrese el nuevo precio del comic: ";
                 getline(cin, _precio);
-                if(validarNumero(_precio)){
-                    newPrecio = stof(_precio.c_str());
-                    break;
+                if(validarStringVacio(_precio)){
+                    if(validarNumero(_precio)){
+                        newPrecio = stof(_precio.c_str());
+                        break;
+                    }
                 }
             }
             this->comics[indice].setPrecio((float) newPrecio);
@@ -447,8 +441,9 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             if(oferta)cout << "El comic esta en oferta" << endl;
             if(!oferta) cout << "El comic no esta en oferta" << endl;
             cout << question << "Desea cambiar el estado de la oferta? (1 - Si, 2 - No): ";
-            while(option != "1" & option != "2"){
+            while(option != "1" && option != "2"){
                 getline(cin, option);
+                if(option != "1" && option != "2") printf("Opcion invalida\n");
             }
             if(option == "1"){
                 this->comics[indice].setOferta(!oferta);
@@ -472,11 +467,13 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             while(true){
                 cout << "Ingrese el nuevo precio del comic: ";
                 getline(cin, _precio);
-                if(validarNumero(_precio)){
-                    newPrecio = stof(_precio.c_str());
-                    break;
-                } else{
-                    cout << "Ingrese un precio valido"<< endl;
+                if(validarStringVacio(_precio)){
+                    if(validarNumero(_precio)){
+                        newPrecio = stof(_precio.c_str());
+                        break;
+                    } else{
+                        cout << "Ingrese un precio valido"<< endl;
+                    }
                 }
             }
             this->comics[comics.size()-1].setPrecio((float) newPrecio);
@@ -486,8 +483,9 @@ void ComicsAdquiridos::organizarLotesAdquiridos(){
             this->comics[comics.size()-1].setCantidad(comicsAdquiridos[i].getNLotes() * 20);
 
             cout << question << "El comic esta en oferta? (1 - Si, 2 - No): ";
-            while(option != "1" & option != "2"){
+            while(option != "1" && option != "2"){
                 getline(cin, option);
+                if(option != "1" && option != "2") printf("Opcion invalida\n");
             }
             if(option == "1") this->comics[comics.size()-1].setOferta(true);
             if(option == "2") this->comics[comics.size()-1].setOferta(false);
@@ -519,11 +517,18 @@ void ComicsAdquiridos::guardarComicsAdquiridos(){
     ofstream archivo("ComicsAdquiridos.dat");
     if(archivo.is_open()){
         for(int i = 0; i < comicsAdquiridos.size(); i++){
-            archivo << comicsAdquiridos[i].getCodigo() << endl;
-            archivo << comicsAdquiridos[i].getCompania() << endl;
-            archivo << comicsAdquiridos[i].getNombre() << endl;
-            archivo << comicsAdquiridos[i].getPrecio() << endl;
-            archivo << comicsAdquiridos[i].getFecha() << endl;
+            archivo << comicsAdquiridos[i].getCodigo() << " ";
+            
+            string compania = comicsAdquiridos[i].getCompania();
+            std::replace(compania.begin(), compania.end(), ' ', '-');
+            archivo << compania << " ";
+
+            string nombre = comicsAdquiridos[i].getNombre();
+            std::replace(nombre.begin(), nombre.end(), ' ', '-');
+            archivo << nombre << " ";
+
+            archivo << comicsAdquiridos[i].getPrecio() << " ";
+            archivo << comicsAdquiridos[i].getFecha() << " ";
             archivo << comicsAdquiridos[i].getNLotes() << endl;
         }
     } else{
